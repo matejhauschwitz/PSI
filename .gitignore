@@ -1,0 +1,7 @@
+prototype/node_modules/
+prototype/build/
+prototype/dist/
+prototype/coverage/
+prototype/.DS_Store
+prototype/*.log
+prototype/.env*
