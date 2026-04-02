@@ -8,10 +8,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using WEA_BE.DTO;
-using WEA_BE.Models;
+using SPI.DTO;
+using SPI.Models;
 
-namespace WEA_BE.Services;
+namespace SPI.Services;
 
 /// <summary>
 /// Služba pro správu autentizace uživatelů, zahrnující registraci a přihlášení.

@@ -1,4 +1,4 @@
-﻿namespace WEA_BE.Models;
+﻿namespace SPI.Models;
 
 public class FilePathOptions
 {

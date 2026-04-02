@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WEA_BE.DTO;
-using WEA_BE.Services;
+using SPI.DTO;
+using SPI.Services;
 
-namespace WEA_BE.Controllers;
+namespace SPI.Controllers;
 [Route("user")]
 [ApiController]
 public class UserController : ControllerBase

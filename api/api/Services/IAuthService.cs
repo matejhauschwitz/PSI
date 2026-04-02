@@ -1,6 +1,6 @@
-﻿using WEA_BE.DTO;
+﻿using SPI.DTO;
 
-namespace WEA_BE.Services
+namespace SPI.Services
 {
     /// <summary>
     /// Služba pro správu autentizace uživatelů, zahrnující registraci a přihlášení.
