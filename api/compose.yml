@@ -1,0 +1,39 @@
+services:
+  wea_db:
+    image: mysql:9
+    restart: unless-stopped
+    container_name: wea_db
+    ports:
+      - "5006:3306"
+    volumes:
+      - ./dbdata:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: WEAez
+    networks:
+      - cdb-network
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  sk07-web:
+    image: hejsekvojtech/wea_be
+    container_name: sk07-web
+    depends_on:
+      wea_db:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8006:8080"
+    volumes:
+      - /home/cerny/logs/sk07:/home/app/logs
+    networks:
+      - cdb-network
+networks:
+  cdb-network:
+    name: cdb-network
+    driver: bridge
+    external: true
