@@ -3,9 +3,9 @@ using EFModels.Data;
 using EFModels.Enums;
 using EFModels.Models;
 using Microsoft.EntityFrameworkCore;
-using WEA_BE.DTO;
+using SPI.DTO;
 
-namespace WEA_BE.Services;
+namespace SPI.Services;
 
 public class UserService : IUserService
 {

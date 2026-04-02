@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WEA_BE", "WEA_BE\WEA_BE.csproj", "{07B172BE-830A-4E3E-893F-B3E77ABF032B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPI", "api\SPI.csproj", "{07B172BE-830A-4E3E-893F-B3E77ABF032B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFModels", "EFModels\EFModels.csproj", "{2B33B88E-7CDA-4908-813F-DCEACFF50F6B}"
 EndProject

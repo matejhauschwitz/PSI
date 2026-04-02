@@ -1,4 +1,4 @@
-﻿namespace WEA_BE.DTO;
+﻿namespace SPI.DTO;
 
 public class UserDetailDto
 {

@@ -1,7 +1,11 @@
-﻿namespace SPI.DTO;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class AddressDto
+namespace EFModels.Models;
+
+public class Address
 {
+    [Key]
+    public int Id { get; set; }
     public string StreetAddress { get; set; }
     public string City { get; set; }
     public string Zip { get; set; }

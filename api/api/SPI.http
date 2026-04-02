@@ -1,0 +1,6 @@
+@SPI_HostAddress = http://localhost:5118
+
+GET {{SPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

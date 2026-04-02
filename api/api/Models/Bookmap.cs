@@ -2,7 +2,7 @@
 using EFModels.Models;
 using System.Globalization;
 
-namespace WEA_BE.Models;
+namespace SPI.Models;
 
 public sealed class BookMap : ClassMap<Book>
 {

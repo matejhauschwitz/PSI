@@ -4,9 +4,9 @@ using EFModels.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using WEA_BE.DTO;
-using WEA_BE.Models;
-using WEA_BE.Services;
+using SPI.DTO;
+using SPI.Models;
+using SPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,11 +30,11 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseMySql(ConnectionString, serverVersion, o => { o.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30), null); });
 });
 
-var WEACors = "_WEACors";
+var SPICors = "_SPICors";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(WEACors,
+    options.AddPolicy(SPICors,
         policy =>
         {
             policy.AllowAnyOrigin()
@@ -147,7 +147,7 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WEA Project API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SPI Project API v1");
     c.RoutePrefix = "docs";
 });
 
@@ -155,7 +155,7 @@ app.UseSerilogRequestLogging();
 
 //app.UseHttpsRedirection();
 
-app.UseCors(WEACors);
+app.UseCors(SPICors);
 
 app.UseAuthorization();
 
