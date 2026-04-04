@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Book } from '../types'
@@ -10,7 +10,15 @@ interface BooksCarouselProps {
 
 export default function BooksCarousel({ books, loading }: BooksCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const itemsPerPage = 4
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024)
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const itemsPerPage = windowWidth < 768 ? 1 : windowWidth < 1024 ? 2 : 4
 
   if (loading) {
     return (
@@ -38,17 +46,17 @@ export default function BooksCarousel({ books, loading }: BooksCarouselProps) {
   const visibleBooks = books.slice(currentIndex, currentIndex + itemsPerPage)
 
   return (
-    <section className="max-w-7xl mx-auto px-6 md:px-12 py-20">
+    <section className="max-w-7xl mx-auto px-4 md:px-12 py-12 md:py-20">
       {/* Header */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-12 gap-4">
         <div className="space-y-2">
-          <h2 className="text-4xl font-black text-slate-900">Doporučované knihy</h2>
-          <p className="text-slate-600 font-medium">Nejlépe hodnocené tituly z naší sbírky</p>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900">Doporučované knihy</h2>
+          <p className="text-sm md:text-base text-slate-600 font-medium">Nejlépe hodnocené tituly z naší sbírky</p>
         </div>
 
         {/* Navigation arrows - Only show if there are more books than items per page */}
         {hasNavigation && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 self-start md:self-auto">
             <button
               onClick={handlePrev}
               disabled={currentIndex === 0}
@@ -70,7 +78,7 @@ export default function BooksCarousel({ books, loading }: BooksCarouselProps) {
       </div>
 
       {/* Carousel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {visibleBooks.map((book) => (
           <Link
             key={book.id}

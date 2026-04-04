@@ -22,45 +22,45 @@ export default function HeroBanner({
   return (
     <div className="relative overflow-hidden">
       {/* Layout - Left dark section + Right bestseller */}
-      <div className="flex flex-col lg:flex-row min-h-[500px] lg:min-h-[600px]">
+      <div className="flex flex-col lg:flex-row min-h-[500px] md:min-h-[550px] lg:min-h-[600px]">
         {/* Left section - Dark with text */}
-        <div className="lg:w-1/2 bg-slate-900 text-white px-6 md:px-12 py-20 flex flex-col justify-center">
+        <div className="lg:w-1/2 bg-slate-900 text-white px-4 md:px-12 py-12 md:py-20 flex flex-col justify-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-blue-600 w-fit px-4 py-2 font-bold mb-8 text-sm">
+          <div className="inline-flex items-center gap-2 bg-blue-600 w-fit px-4 py-2 font-bold mb-6 md:mb-8 text-xs md:text-sm">
             → KNIHOVNA
           </div>
 
           {/* Main heading */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-6 tracking-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black leading-tight mb-4 md:mb-6 tracking-tight">
             Prohlédni si<br />
             <span className="text-blue-400">nejlepší</span>
             <br />
             knihy
           </h1>
 
-          <p className="text-lg text-slate-300 max-w-md mb-12 leading-relaxed font-medium">
-            Najdi si svou oblíbenou knihu ze tisíců dostupných titulů. Čti, recenzuj a sbírej.
+          <p className="text-base md:text-lg text-slate-300 max-w-md mb-8 md:mb-12 leading-relaxed font-medium">
+            Najdi si svou oblíbenou knihu ze tisíc dostupných titulů. Čti, recenzuj a sbírej.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 w-fit">
+          <div className="flex flex-col gap-3 md:flex-row md:gap-4 w-fit">
             <a
               href="/books"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 font-bold transition-colors text-center uppercase tracking-wide"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-3 md:py-4 font-bold transition-colors text-center uppercase tracking-wide text-sm md:text-base"
             >
               Procházet
             </a>
             {!isLoggedIn ? (
               <a
                 href="/login"
-                className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-8 py-4 font-bold transition-colors text-center uppercase tracking-wide"
+                className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-6 md:px-8 py-3 md:py-4 font-bold transition-colors text-center uppercase tracking-wide text-sm md:text-base"
               >
                 Přihlásit
               </a>
             ) : (
               <a
                 href="/favourites"
-                className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-8 py-4 font-bold transition-colors text-center uppercase tracking-wide"
+                className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-6 md:px-8 py-3 md:py-4 font-bold transition-colors text-center uppercase tracking-wide text-sm md:text-base"
               >
                 Mé Oblíbené
               </a>
@@ -69,7 +69,7 @@ export default function HeroBanner({
         </div>
 
         {/* Right section - Bestseller book with overlay */}
-        <div className="lg:w-1/2 bg-slate-200 relative overflow-hidden cursor-pointer group">
+        <div className="w-full lg:w-1/2 bg-slate-200 relative overflow-hidden cursor-pointer group min-h-[300px] md:min-h-[400px] lg:auto">
           {loading || !bestseller ? (
             <div className="w-full h-full flex items-center justify-center text-slate-500">
               <div className="text-center">
