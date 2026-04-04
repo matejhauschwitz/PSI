@@ -40,7 +40,7 @@ function FavouriteBookCard({ book, onRemove }: FavouriteBookCardProps) {
       {/* Book Info */}
       <div className="p-4">
         <Link to={`/books/${book.id}`} className="group/link">
-          <h3 className="font-semibold text-stone-900 mb-1 line-clamp-2 group-hover/link:text-emerald-600 transition-colors">
+          <h3 className="font-semibold text-stone-900 mb-1 line-clamp-2 group-hover/link:text-blue-600 transition-colors">
             {book.title}
           </h3>
         </Link>
@@ -63,7 +63,7 @@ function FavouriteBookCard({ book, onRemove }: FavouriteBookCardProps) {
           )}
 
           {book.price && (
-            <span className="font-semibold text-emerald-600">{book.price} Kč</span>
+            <span className="font-semibold text-blue-600">{book.price} Kč</span>
           )}
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function FavouritesBooksGrid({
         <div className="text-red-600 mb-4">{error}</div>
         <button
           onClick={onRetry}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors"
         >
           Zkusit znovu
         </button>
@@ -135,7 +135,7 @@ export default function FavouritesBooksGrid({
         <div className="text-center py-12">
           <div className="text-stone-600">Zatím nemáte žádné oblíbené knihy</div>
           <div className="mt-4">
-            <Link to="/books" className="text-emerald-600 hover:text-emerald-700 transition-colors">
+            <Link to="/books" className="text-blue-600 hover:text-blue-700 transition-colors">
               Prohlédněte si naši sbírku
             </Link>
           </div>

@@ -10,24 +10,24 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 text-emerald-600 font-bold text-xl tracking-tight">
+            <Link to="/" className="flex items-center gap-2 text-blue-600 font-bold text-xl tracking-tight">
               <BookOpen className="h-6 w-6" />
               <span>Knihovna</span>
             </Link>
           </div>
           <div className="flex items-center gap-6">
-            <Link to="/books" className="text-stone-600 hover:text-emerald-600 transition-colors flex items-center gap-1 font-medium">
+            <Link to="/books" className="text-stone-600 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium">
               <BookOpen className="h-5 w-5" />
               <span className="hidden sm:inline">Knihy</span>
             </Link>
 
             {isAuthenticated && (
               <>
-                <Link to="/favourites" className="text-stone-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                <Link to="/favourites" className="text-stone-600 hover:text-blue-600 transition-colors flex items-center gap-1">
                   <Heart className="h-5 w-5" />
                   <span className="hidden sm:inline">Oblíbené</span>
                 </Link>
-                <Link to="/profile" className="text-stone-600 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                <Link to="/profile" className="text-stone-600 hover:text-blue-600 transition-colors flex items-center gap-1">
                   <User className="h-5 w-5" />
                   <span className="hidden sm:inline">Profil</span>
                 </Link>
@@ -43,10 +43,10 @@ export default function Navbar() {
 
             {!isAuthenticated && (
               <>
-                <Link to="/login" className="text-stone-600 hover:text-emerald-600 transition-colors font-medium">
+                <Link to="/login" className="text-stone-600 hover:text-blue-600 transition-colors font-medium">
                   Přihlášení
                 </Link>
-                <Link to="/register" className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
+                <Link to="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors">
                   Registrace
                 </Link>
               </>

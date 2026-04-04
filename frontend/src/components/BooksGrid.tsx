@@ -32,7 +32,7 @@ export default function BooksGrid({
         <div className="text-red-600 mb-4">{error}</div>
         <button
           onClick={onRetry}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors"
         >
           Zkusit znovu
         </button>
@@ -82,7 +82,7 @@ export default function BooksGrid({
 
                 {/* Book Info */}
                 <div className="p-4">
-                  <h3 className="font-semibold text-stone-900 mb-1 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                  <h3 className="font-semibold text-stone-900 mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors">
                     {book.title}
                   </h3>
                   <p className="text-stone-600 text-sm mb-2">{book.author}</p>
@@ -104,7 +104,7 @@ export default function BooksGrid({
                     )}
 
                     {book.price && (
-                      <span className="font-semibold text-emerald-600">
+                      <span className="font-semibold text-blue-600">
                         {book.price} Kč
                       </span>
                     )}
@@ -127,7 +127,7 @@ export default function BooksGrid({
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="text-emerald-600 hover:text-emerald-700 transition-colors"
+              className="text-blue-600 hover:text-blue-700 transition-colors"
             >
               Zobrazit všechny knihy
             </button>

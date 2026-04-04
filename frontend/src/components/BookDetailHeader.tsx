@@ -53,7 +53,7 @@ export default function BookDetailHeader({
           <div className="md:w-2/3 p-8 md:p-12 flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               {book.genre && (
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-full">
+                <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full">
                   {book.genre}
                 </span>
               )}
@@ -110,7 +110,7 @@ export default function BookDetailHeader({
                 {isAuthenticated ? (
                   <button
                     onClick={onAddToCart}
-                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg"
                   >
                     <ShoppingCart className="h-5 w-5" />
                     Do košíku

@@ -47,7 +47,7 @@ export default function BooksFilters({
             <input 
               type="text" 
               placeholder="Název knihy..." 
-              className="w-full pl-9 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full pl-9 pr-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -55,7 +55,7 @@ export default function BooksFilters({
           </div>
           <button
             onClick={onSearch}
-            className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-sm transition-colors"
+            className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-sm transition-colors"
           >
             Hledat
           </button>
@@ -66,7 +66,7 @@ export default function BooksFilters({
           <div className="space-y-2">
             <button 
               onClick={() => onGenreChange('')}
-              className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${genre === '' ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-stone-600 hover:bg-stone-50'}`}
+              className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${genre === '' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-stone-600 hover:bg-stone-50'}`}
             >
               Všechny žánry
             </button>
@@ -74,7 +74,7 @@ export default function BooksFilters({
               <button 
                 key={g}
                 onClick={() => onGenreChange(g)}
-                className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${genre === g ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-stone-600 hover:bg-stone-50'}`}
+                className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${genre === g ? 'bg-blue-50 text-blue-700 font-medium' : 'text-stone-600 hover:bg-stone-50'}`}
               >
                 {g}
               </button>

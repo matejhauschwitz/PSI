@@ -55,7 +55,7 @@ export default function CommentsSection({
         {isAuthenticated ? (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors"
           >
             Přidat recenzi
           </button>
@@ -154,7 +154,7 @@ export default function CommentsSection({
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Sdělte svoje zkušenosti s touto knihou..."
-                  className="w-full h-32 px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full h-32 px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
 
@@ -176,7 +176,7 @@ export default function CommentsSection({
                 <button
                   type="submit"
                   disabled={isSubmitting || !commentText.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="h-4 w-4" />
                   Odeslat
