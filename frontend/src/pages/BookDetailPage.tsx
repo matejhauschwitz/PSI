@@ -37,6 +37,7 @@ export default function BookDetailPage() {
         isFavourite={isFavourite}
         onToggleFavourite={toggleFavourite}
         onAddToCart={handleAddToCart}
+        isAuthenticated={isAuthenticated}
       />
 
       <CommentsSection

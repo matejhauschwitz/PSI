@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart, ArrowLeft } from 'lucide-react'
+import { Heart, ShoppingCart, ArrowLeft, LogIn } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import type { Book } from '../types'
 
@@ -7,13 +7,15 @@ interface BookDetailHeaderProps {
   isFavourite: boolean
   onToggleFavourite: () => void
   onAddToCart: () => void
+  isAuthenticated: boolean
 }
 
 export default function BookDetailHeader({
   book,
   isFavourite,
   onToggleFavourite,
-  onAddToCart
+  onAddToCart,
+  isAuthenticated
 }: BookDetailHeaderProps) {
   const navigate = useNavigate()
 
@@ -105,13 +107,23 @@ export default function BookDetailHeader({
                   <Heart className={`h-5 w-5 ${isFavourite ? 'fill-current' : ''}`} />
                 </button>
 
-                <button
-                  onClick={onAddToCart}
-                  className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Do košíku
-                </button>
+                {isAuthenticated ? (
+                  <button
+                    onClick={onAddToCart}
+                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    Do košíku
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="flex items-center gap-2 bg-stone-600 hover:bg-stone-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg"
+                  >
+                    <LogIn className="h-5 w-5" />
+                    Pro nákup se přihlašte
+                  </button>
+                )}
               </div>
             </div>
           </div>
