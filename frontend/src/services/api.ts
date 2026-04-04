@@ -40,11 +40,19 @@ export const authService = {
 
 // Books Service
 export const bookService = {
-  getBooks: async (page = 1, pageSize = 10, search = '', genre = '') => {
-    const response = await api.get<BooksResponse>('/books', {
-      params: { page, pageSize, search, genre },
-    })
+  getBooks: async (page = 1, pageSize = 10, title = '', genre = '', minPrice?: number, maxPrice?: number) => {
+    const params: any = { page, pageSize };
+    if (title) params.title = title;
+    if (genre) params.genre = genre;
+    if (minPrice !== undefined) params.minPrice = minPrice;
+    if (maxPrice !== undefined) params.maxPrice = maxPrice;
+    const response = await api.get<BooksResponse>('/books', { params });
     return response.data
+  },
+
+  getGenres: async () => {
+    const response = await api.get<string[]>('/books/genres');
+    return response.data;
   },
 
   getBook: async (id: number) => {
