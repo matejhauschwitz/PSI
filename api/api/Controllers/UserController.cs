@@ -79,3 +79,4 @@ public class UserController : ControllerBase
             return BadRequest("Could not retrieve user count");
         }
     }
+}

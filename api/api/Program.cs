@@ -59,8 +59,23 @@ builder.Services.AddAutoMapper(cfg =>
         .ForMember(dest => dest.IsHidden, opt => opt.Ignore())
         .ForMember(dest => dest.Genres, opt => opt.Ignore())
         .ForMember(dest => dest.Id, opt => opt.Ignore());
-    cfg.CreateMap<Book, BookDto>().ReverseMap();
-    cfg.CreateMap<Book, BookSimpleDto>().ReverseMap();
+    
+
+    cfg.CreateMap<Book, BookDto>()
+        .ForMember(dest => dest.CoverImageUrl, opt => opt.MapFrom(src => 
+            !string.IsNullOrEmpty(src.ISBN13) 
+                ? $"https://covers.openlibrary.org/b/isbn/{src.ISBN13}-L.jpg"
+                : $"https://covers.openlibrary.org/b/isbn/{src.ISBN10}-L.jpg"))
+        .ReverseMap();
+    
+
+    cfg.CreateMap<Book, BookSimpleDto>()
+        .ForMember(dest => dest.CoverImageUrl, opt => opt.MapFrom(src => 
+            !string.IsNullOrEmpty(src.ISBN13) 
+                ? $"https://covers.openlibrary.org/b/isbn/{src.ISBN13}-L.jpg"
+                : $"https://covers.openlibrary.org/b/isbn/{src.ISBN10}-L.jpg"))
+        .ReverseMap();
+    
     cfg.CreateMap<AuditLog, AuditLogDto>().ReverseMap();
     cfg.CreateMap<Order, OrderDto>().ReverseMap();
     cfg.CreateMap<User, UserDto>().ReverseMap();
@@ -87,7 +102,11 @@ builder.Services.AddScoped<LoadFromCsvService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
