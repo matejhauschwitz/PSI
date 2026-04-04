@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { authService } from '../services/api'
 
 export default function RegisterPage() {
@@ -45,113 +45,144 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-2">Registrace</h1>
-          <p className="text-stone-600">Vytvořte si účet v naší knihovně</p>
-        </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Jméno
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="Zadejte vaše jméno"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Uživatelské jméno
-            </label>
-            <input
-              type="text"
-              name="userName"
-              value={formData.userName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="Zvolte uživatelské jméno"
-              required
-            />
+    <div className="flex items-center justify-center py-20 px-4">
+      <div className="w-full max-w-6xl">
+        <div className="flex flex-col lg:flex-row overflow-hidden rounded-2xl shadow-lg border border-stone-200">
+          {/* Left - Dark info section */}
+          <div className="w-full lg:w-1/2 bg-slate-900 text-white px-12 py-16 flex flex-col justify-center">
+            <div>
+              <h2 className="text-5xl font-black mb-8 leading-tight">Výjimečné čtení čeká</h2>
+              <p className="text-xl text-slate-300 mb-12 leading-relaxed font-semibold">
+                Vytvořte si účet a vstupte do světa tisíců knih.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <span className="text-blue-400 font-black text-2xl flex-shrink-0">✓</span>
+                  <span className="text-slate-200 text-lg font-medium leading-relaxed">Přístup k plné knihovně</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-blue-400 font-black text-2xl flex-shrink-0">✓</span>
+                  <span className="text-slate-200 text-lg font-medium leading-relaxed">Své osobní zbírce výběru</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-blue-400 font-black text-2xl flex-shrink-0">✓</span>
+                  <span className="text-slate-200 text-lg font-medium leading-relaxed">Zapojení se v komunitě</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="vas@email.cz"
-            />
+          {/* Right - Form section */}
+          <div className="w-full lg:w-1/2 bg-white px-8 lg:px-12 py-16 flex flex-col justify-center">
+            <div className="mb-8">
+              <h1 className="text-4xl font-black text-slate-900 mb-3">Registrace</h1>
+              <p className="text-lg text-slate-600 font-medium">Vytvořte si nový účet</p>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-600 text-red-700 text-base font-medium">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-base font-black text-slate-900 mb-3 uppercase tracking-wide">
+                    Jméno
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors text-base"
+                    placeholder="Vaše jméno"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-base font-black text-slate-900 mb-3 uppercase tracking-wide">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors text-base"
+                    placeholder="vas@email.cz"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-base font-black text-slate-900 mb-3 uppercase tracking-wide">
+                  Uživatelské jméno
+                </label>
+                <input
+                  type="text"
+                  name="userName"
+                  value={formData.userName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors text-base"
+                  placeholder="uživatelské jméno"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-base font-black text-slate-900 mb-3 uppercase tracking-wide">
+                    Heslo
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors text-base"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-base font-black text-slate-900 mb-3 uppercase tracking-wide">
+                    Potvrzení hesla
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors text-base"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-black py-3 px-4 rounded-lg transition-colors uppercase tracking-wide text-base"
+              >
+                {loading ? 'Vytvářím...' : 'Vytvořit účet'}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-slate-600 text-base font-medium">
+                Už máte účet?{' '}
+                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-black">
+                  Přihlaste se
+                </Link>
+              </p>
+            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Heslo
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="Zadejte heslo"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">
-              Potvrzení hesla
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              placeholder="Zadejte heslo znovu"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-stone-400 text-white font-medium py-3 px-4 rounded-xl transition-colors shadow-sm"
-          >
-            {loading ? 'Registruji...' : 'Vytvořit účet'}
-          </button>
-        </form>
-
-        <div className="mt-8 text-center">
-          <p className="text-stone-600">
-            Už máte účet?{' '}
-            <a
-              href="/login"
-              className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
-            >
-              Přihlaste se
-            </a>
-          </p>
         </div>
       </div>
     </div>
