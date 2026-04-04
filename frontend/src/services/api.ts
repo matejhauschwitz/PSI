@@ -96,7 +96,43 @@ export const userService = {
 // Comment Service
 export const commentService = {
   addComment: async (comment: Comment) => {
-    return api.post('/comments/comment', comment)
+    const token = localStorage.getItem('jwt_token')
+    if (!token) {
+      throw new Error('Nejste přihlášeni')
+    }
+
+    const payload = {
+      bookId: comment.bookId,
+      content: comment.comment,
+      rating: comment.rating
+    }
+
+    console.log('Sending comment payload:', payload)
+
+    try {
+      return await api.post('/comments/comment', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+    } catch (error: any) {
+      // Extrahuj error message z backendu
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data ||
+                          error.message ||
+                          'Nepodařilo se přidat komentář'
+      throw new Error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage))
+    }
+  },
+
+  getComments: async (bookId: number) => {
+    try {
+      const response = await api.get<Comment[]>(`/comments/${bookId}`)
+      return response.data
+    } catch (err) {
+      console.warn('Comments endpoint not available')
+      return []
+    }
   },
 }
 
