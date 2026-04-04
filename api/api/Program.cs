@@ -81,6 +81,9 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<User, UserDto>().ReverseMap();
     cfg.CreateMap<Address, AddressDto>().ReverseMap();
     cfg.CreateMap<User, UserDetailDto>()
+       .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+       .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+       .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
        .ForMember(dest => dest.FavouriteGerners, opt =>
            opt.MapFrom(src => src.FavouriteGerners.Select(x => x.Name).ToList()))
        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
