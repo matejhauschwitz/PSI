@@ -7,6 +7,56 @@
 - **Jiří Šeps**
 - **Vojtěch Gerö**
 - **Matěj Hauschwitz**
+
+## 🚀 Spuštění projektu
+
+### Předpoklady
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [MySQL Server](https://dev.mysql.com/downloads/mysql/) nebo Docker
+
+### Nastavení databáze
+1. Spusťte MySQL server (lokálně nebo přes Docker)
+2. Vytvořte databázi `bookstore`
+
+### Nastavení aplikace
+1. Naklonujte repository
+2. Přejděte do složky `PSI/api/api`
+3. Zkopírujte `.env.example` na `.env`
+4. Upravte `.env` soubor s vašimi hodnotami:
+   ```
+   JWT_SECRET_KEY=your_secret_key_here
+   ```
+5. Upravte `appsettings.Development.json` s vaším connection stringem k databázi
+6. Spusťte migrations:
+   ```bash
+   dotnet ef database update
+   ```
+7. Spusťte aplikaci:
+   ```bash
+   dotnet run
+   ```
+
+### Testování API
+Pro testování API endpointů použijte:
+
+1. **Automatický testovací skript** (nedoporučuje se commitovat):
+   ```bash
+   .\test-api.ps1
+   ```
+   Tento skript automaticky získá JWT token a otestuje základní funkcionality.
+
+2. **Ruční testování přes SPI.http**:
+   - Otevřete `api/api/SPI.http` ve VS Code
+   - Nejdřív spusťte registraci a přihlášení
+   - Zkopírujte JWT token z odpovědi přihlášení
+   - Nahraďte `YOUR_JWT_TOKEN_HERE` ve zbývajících requestech
+   - Klikněte "Send Request" u jednotlivých endpointů
+
+### Přidání testovacích dat
+Pro testování funkcí s knihami použijte admin endpointy:
+- `POST /data/cdb` - import z JSON
+- `POST /data/csv` - import z CSV
+
 ## Přehled
 • Správu uživatelských účtů (registrace, přihlášení, profil)
 

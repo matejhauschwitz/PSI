@@ -1,6 +1,100 @@
 @SPI_HostAddress = http://localhost:5118
 
-GET {{SPI_HostAddress}}/weatherforecast/
-Accept: application/json
+### Registrace uživatele
+POST {{SPI_HostAddress}}/auth/register
+Content-Type: application/json
 
-###
+{
+  "name": "Test User",
+  "userName": "testuser",
+  "password": "testpassword123",
+  "email": "test@example.com",
+  "favouriteGerners": []
+}
+
+### Přihlášení uživatele
+POST {{SPI_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "userName": "testuser",
+  "password": "testpassword123"
+}
+
+### Získání knih (bez přihlášení)
+GET {{SPI_HostAddress}}/books
+
+### Získání detailu knihy (bez přihlášení)
+GET {{SPI_HostAddress}}/books/1
+
+### Získání žánrů
+GET {{SPI_HostAddress}}/books/genres
+
+### Získání oblíbených knih (vyžaduje JWT token)
+GET {{SPI_HostAddress}}/books/favourites
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Přidání knihy do oblíbených (vyžaduje JWT token)
+POST {{SPI_HostAddress}}/books/favourites/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Odebrání knihy z oblíbených (vyžaduje JWT token)
+DELETE {{SPI_HostAddress}}/books/favourites/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Získání detailu uživatele (vyžaduje JWT token)
+GET {{SPI_HostAddress}}/user/detail
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Aktualizace údajů uživatele (vyžaduje JWT token)
+POST {{SPI_HostAddress}}/user/update
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Updated Test User",
+  "email": "updated@example.com"
+}
+
+### Přidání komentáře ke knize (vyžaduje JWT token)
+POST {{SPI_HostAddress}}/comments/comment
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "bookId": 1,
+  "comment": "Skvělá kniha!",
+  "rating": 5
+}
+
+### Vytvoření objednávky (vyžaduje JWT token)
+POST {{SPI_HostAddress}}/order/order
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "bookIds": [1, 2],
+  "paymentMethod": "CreditCard"
+}
+
+### Získání objednávek uživatele (vyžaduje JWT token)
+GET {{SPI_HostAddress}}/order/orders
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Import knih z CSV (vyžaduje JWT token admin)
+POST {{SPI_HostAddress}}/data/csv
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: text/plain
+
+CSV_DATA_HERE
+
+### Import knih z JSON (vyžaduje JWT token admin)
+POST {{SPI_HostAddress}}/data/cdb
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+[{"title": "Test Book", "author": "Test Author"}]
+
+### Získání audit logu (vyžaduje JWT token admin)
+GET {{SPI_HostAddress}}/audit/audit
+Authorization: Bearer YOUR_JWT_TOKEN_HERE

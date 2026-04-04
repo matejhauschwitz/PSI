@@ -15,6 +15,12 @@ prototype/.env*
 # docker volumes
 dbdata/
 
+# Environment files
+.env
+
+# Test files
+test-api.ps1
+
 # User-specific files
 *.rsuser
 *.suo
