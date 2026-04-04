@@ -53,8 +53,6 @@ public class CommentController : ControllerBase
         }
         bool result = _commentService.AddComment(commentRequest.bookId, commentRequest.content, user.UserName, commentRequest.rating);
 
-
-
         if (result)
         {
             _logger.LogInformation("Added comment");
@@ -63,6 +61,22 @@ public class CommentController : ControllerBase
 
         _logger.LogInformation("Could not add comment");
         return BadRequest("Comment could not be added");
+    }
+
+    [HttpGet("{bookId:int}")]
+    [ProducesResponseType<List<CommentDto>>(StatusCodes.Status200OK)]
+    public IActionResult GetComments([FromRoute] int bookId)
+    {
+        try
+        {
+            var comments = _commentService.GetCommentsByBookId(bookId);
+            return Ok(comments);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error getting comments for book {BookId}: {Error}", bookId, ex.Message);
+            return BadRequest("Could not retrieve comments");
+        }
     }
 
 

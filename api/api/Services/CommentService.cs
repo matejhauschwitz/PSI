@@ -67,4 +67,25 @@ public class CommentService : ICommentService
         return _ctx.Comments.Any(c => c.BookId == bookId && c.UserId == user.Id && c.Rating > 0);
     }
 
+    public List<dynamic> GetCommentsByBookId(int bookId)
+    {
+        var comments = _ctx.Comments
+            .Where(c => c.BookId == bookId)
+            .Include(c => c.User)
+            .OrderByDescending(c => c.CreatedDate)
+            .Select(c => new
+            {
+                id = c.Id,
+                bookId = c.BookId,
+                comment = c.Content,
+                rating = c.Rating,
+                creatorUserName = c.User.UserName,
+                createdAt = c.CreatedDate
+            })
+            .Cast<dynamic>()
+            .ToList();
+
+        return comments;
+    }
+
 }
