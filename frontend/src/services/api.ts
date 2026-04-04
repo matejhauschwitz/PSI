@@ -1,0 +1,107 @@
+import axios from 'axios'
+import type { User, Book, Comment, Order, LoginResponse, BooksResponse } from '../types'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5118'
+
+const api = axios.create({
+  baseURL: API_URL,
+})
+
+// Add token to requests if it exists
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('jwt_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// Auth Service
+export const authService = {
+  register: async (user: User & { password: string; favouriteGerners: string[] }) => {
+    return api.post('/auth/register', user)
+  },
+
+  login: async (userName: string, password: string): Promise<string> => {
+    const response = await api.post<string>('/auth/login', { userName, password })
+    const token = response.data
+    localStorage.setItem('jwt_token', token)
+    return token
+  },
+
+  logout: () => {
+    localStorage.removeItem('jwt_token')
+  },
+
+  isAuthenticated: () => {
+    return !!localStorage.getItem('jwt_token')
+  },
+}
+
+// Books Service
+export const bookService = {
+  getBooks: async (page = 1, pageSize = 10, search = '', genre = '') => {
+    const response = await api.get<BooksResponse>('/books', {
+      params: { page, pageSize, search, genre },
+    })
+    return response.data
+  },
+
+  getBook: async (id: number) => {
+    const response = await api.get<Book>(`/books/${id}`)
+    return response.data
+  },
+
+  getGenres: async () => {
+    const response = await api.get<string[]>('/books/genres')
+    return response.data
+  },
+
+  getFavourites: async (page = 1, pageSize = 10) => {
+    const response = await api.get<BooksResponse>('/books/favourites', {
+      params: { page, pageSize },
+    })
+    return response.data
+  },
+
+  addFavourite: async (bookId: number) => {
+    return api.post(`/books/favourites/${bookId}`)
+  },
+
+  removeFavourite: async (bookId: number) => {
+    return api.delete(`/books/favourites/${bookId}`)
+  },
+}
+
+// User Service
+export const userService = {
+  getUserDetail: async () => {
+    const response = await api.get<User>('/user/detail')
+    return response.data
+  },
+
+  updateUser: async (user: Partial<User>) => {
+    return api.post('/user/update', user)
+  },
+}
+
+// Comment Service
+export const commentService = {
+  addComment: async (comment: Comment) => {
+    return api.post('/comments/comment', comment)
+  },
+}
+
+// Order Service
+export const orderService = {
+  createOrder: async (order: Order) => {
+    return api.post('/order/order', order)
+  },
+
+  getOrders: async () => {
+    const response = await api.get<Order[]>('/order/orders')
+    return response.data
+  },
+}
+
+export default api

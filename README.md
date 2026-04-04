@@ -10,33 +10,113 @@
 
 ## 🚀 Spuštění projektu
 
-### Předpoklady
+### ⚡ Spusť VŠECHNO najednou
+
+#### Na **Windows** (PowerShell):
+```powershell
+.\start-dev.ps1
+```
+
+Otevře ti **3 nová okna** s:
+- MySQL (Docker)
+- Backend (.NET)
+- Frontend (React)
+
+#### Na **Linux/Mac** (Make):
+```bash
+make dev
+```
+
+Nebo jednotlivě:
+```bash
+make docker    # MySQL
+make backend   # .NET
+make frontend  # React
+```
+
+---
+
+### 🔧 Manuální spuštění
+
+#### Backend (ASP.NET Core API)
+
+```bash
+cd api/api
+dotnet run
+```
+
+Backend: `http://localhost:5118`
+
+Detaily: Viz [Backend README](./api/README.md)
+
+#### Frontend (React + TypeScript)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend: `http://localhost:3000`
+
+Detaily: Viz [Frontend README](./frontend/README.md)
+
+#### Docker (MySQL)
+
+```bash
+cd api
+docker compose up -d
+```
+
+MySQL: `localhost:5006`
+
+---
+
+## 📋 Požadavky
+
+### Backend
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [MySQL Server](https://dev.mysql.com/downloads/mysql/) nebo Docker
 
-### Nastavení databáze
-1. Spusťte MySQL server (lokálně nebo přes Docker)
-2. Vytvořte databázi `bookstore`
+### Frontend
+- [Node.js 16+](https://nodejs.org/)
+- npm nebo yarn
 
-### Nastavení aplikace
-1. Naklonujte repository
-2. Přejděte do složky `PSI/api/api`
-3. Zkopírujte `.env.example` na `.env`
-4. Upravte `.env` soubor s vašimi hodnotami:
+---
+
+## 🔧 Nastavení
+
+### Backend
+
+1. Přejděte do `api/api`
+2. Zkopírujte `.env.example` na `.env`
+3. Upravte `.env` s vašimi hodnotami:
    ```
    JWT_SECRET_KEY=your_secret_key_here
    ```
-5. Upravte `appsettings.Development.json` s vaším connection stringem k databázi
-6. Spusťte migrations:
+4. Upravte `appsettings.Development.json` s databázovým connection stringem
+5. Spusťte migrations:
    ```bash
    dotnet ef database update
    ```
-7. Spusťte aplikaci:
+
+### Frontend
+
+1. Přejděte do `frontend`
+2. Zkopírujte `.env.example` na `.env`
+3. Upravte `.env` s API URL (pokud backend neběží na defaultní adrese):
+   ```
+   VITE_API_URL=http://localhost:5118
+   ```
+4. Nainstalujte dependence:
    ```bash
-   dotnet run
+   npm install
    ```
 
-### Testování API
+---
+
+## 🧪 Testování API
+
 Pro testování API endpointů použijte:
 
 1. **Automatický testovací skript** (nedoporučuje se commitovat):
@@ -53,124 +133,154 @@ Pro testování API endpointů použijte:
    - Klikněte "Send Request" u jednotlivých endpointů
 
 ### Přidání testovacích dat
+
 Pro testování funkcí s knihami použijte admin endpointy:
 - `POST /data/cdb` - import z JSON
 - `POST /data/csv` - import z CSV
 
-## Přehled
-• Správu uživatelských účtů (registrace, přihlášení, profil)
+---
 
-• Vyhledávání a filtrování knih
+## 📁 Struktura projektu
 
-• Správu komentářů a hodnocení knih
+```
+PSI/
+├── api/                          # Backend
+│   ├── api/                      # ASP.NET Core aplikace
+│   │   ├── Controllers/          # API endpointy
+│   │   ├── Services/             # Business logika
+│   │   ├── DTO/                  # Data transfer objects
+│   │   ├── appsettings.json      # Konfigurace
+│   │   └── SPI.http              # API test requests
+│   ├── EFModels/                 # Entity Framework modely
+│   ├── initdb/                   # SQL inicializační skripty
+│   └── compose.yml               # Docker Compose config
+│
+├── frontend/                      # Frontend
+│   ├── src/
+│   │   ├── components/           # React komponenty
+│   │   ├── pages/                # Page komponenty
+│   │   ├── services/             # API komunikace
+│   │   ├── types/                # TypeScript typy
+│   │   ├── hooks/                # Custom hooks
+│   │   └── App.tsx               # Hlavní komponenta
+│   ├── index.html
+│   ├── vite.config.ts
+│   └── package.json
+│
+├── diagrams/                      # Diagramy (use-case, class-diagram)
+├── prototype/                     # Prototyp (mimo projekt)
+└── README.md                      # Tento soubor
+```
 
-• Správu oblíbených knih uživatelů
+---
 
-• Správu objednávek
+## 📚 Přehled aplikace
 
-• Import dat do databáze z CSV a JSON
+Aplikace poskytuje:
+- Správu uživatelských účtů (registrace, přihlášení, profil)
+- Vyhledávání a filtrování knih
+- Správu komentářů a hodnocení knih
+- Správu oblíbených knih uživatelů
+- Správu objednávek
+- Import dat do databáze z CSV a JSON
+- Auditování akcí uživatelů
 
-• Auditování akcí uživatelů
+### 👥 Uživatelské role
 
-#  Uživatelské role
+Aplikace rozlišuje 3 typy uživatelů: (Viz [use-case diagram](./diagrams/use-case.md))
 
-Aplikace rozlišuje 3 typy uživatelů.
-- [use-case diagram](./diagrams/use-case.md)
-
-## Návštěvník (nepřihlášený)
+#### Návštěvník (nepřihlášený)
 - Může procházet katalog knih
 - Může filtrovat podle žánru
 - Může zobrazit detail knihy a číst recenze
-- Nemůže objednávat ani přidávat hodnocení (bude vyzván k přihlášení)
+- Nemůže objednávat ani přidávat hodnocení
 
-##  Registrovaný uživatel
+#### Registrovaný uživatel
 - Má všechny možnosti návštěvníka
 - Může vytvářet objednávky
 - Může přidávat hodnocení a recenze
-- Má sekci „Můj účet“ (historie objednávek, úprava údajů)
+- Má sekci „Můj účet" (historie objednávek, úprava údajů)
 
-##  Administrátor
+#### Administrátor
 - Má všechny možnosti běžného uživatele
-- Vidí záložku „Administrace“
+- Vidí záložku „Administrace"
 - Může přidávat nové knihy
 - Může zobrazit audit log
-# API Endpoints
-
-## UserController (/user)
-
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| POST | /update | Aktualizace údajů přihlášeného uživatele |
-| GET | /detail | Detail přihlášeného uživatele |
 
 ---
 
-## AuthController (/auth)
+## 🔌 API Endpoints
 
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| POST | /register | Registrace nového uživatele |
-| POST | /login | Přihlášení uživatele (vrací JWT token) |
+Detailní dokumentaci API dostaneš v souboru [api/api/SPI.http](./api/api/SPI.http)
 
----
+### Authenticate endpoints
+- `POST /auth/register` - Registrace nového uživatele
+- `POST /auth/login` - Přihlášení (vrací JWT token)
 
-## BooksController (/books)
+### Books endpoints
+- `GET /books` - Výpis knih s filtrováním a stránkováním
+- `GET /books/{id}` - Detail konkrétní knihy
+- `GET /books/genres` - Seznam všech žánrů
+- `GET /books/favourites` - Výpis oblíbených knih (vyžaduje JWT)
+- `POST /books/favourites/{id}` - Přidání do oblíbených (vyžaduje JWT)
+- `DELETE /books/favourites/{bookId}` - Odebrání z oblíbených (vyžaduje JWT)
 
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| GET | / | Výpis knih s filtrováním (název, autor, žánr, cena, hodnocení) + stránkování |
-| GET | /{id} | Detail konkrétní knihy |
-| GET | /genres | Seznam unikátních žánrů |
-| POST | /favourites/{id} | Přidání knihy do oblíbených |
-| GET | /favourites | Výpis oblíbených knih přihlášeného uživatele |
-| DELETE | /favourites/{bookId} | Odstranění knihy z oblíbených |
+### User endpoints
+- `GET /user/detail` - Detail přihlášeného uživatele (vyžaduje JWT)
+- `POST /user/update` - Aktualizace údajů uživatele (vyžaduje JWT)
 
----
+### Order endpoints
+- `POST /order/order` - Vytvoření nové objednávky (vyžaduje JWT)
+- `GET /order/orders` - Výpis objednávek uživatele (vyžaduje JWT)
 
-## CommentController (/comments)
+### Comment endpoints
+- `POST /comments/comment` - Přidání komentáře a hodnocení (vyžaduje JWT)
 
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| POST | /comment | Přidání komentáře a hodnocení ke knize |
+### Data import endpoints
+- `POST /data/csv` - Import knih z CSV souboru (admin)
+- `POST /data/cdb` - Import knih z JSON (admin)
 
----
-
-## OrderController (/order)
-
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| POST | /order | Vytvoření nové objednávky |
-| GET | /orders | Výpis objednávek přihlášeného uživatele |
+### Audit endpoints
+- `GET /audit/audit` - Audit log (admin)
 
 ---
 
-## DataLoadController (/data)
-
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| POST | /csv | Import knih z CSV souboru |
-| POST | /cdb | Import knih z JSON / string zdroje |
-
----
-
-## AuditController (/audit)
-
-| Metoda | Endpoint | Popis |
-|--------|----------|--------|
-| GET | /audit | Získání auditních záznamů |
-
----
-
-## Třídy
-- [class diagram](./diagrams/class-diagram.md)
-
-## Tech Stack
-### Frontend
-- React
-- TypeScript
-- JavaScript
-- CSS
+## 🛠️ Tech Stack
 
 ### Backend
-- .NET (ASP.NET Core Web API)
+- **Framework:** .NET 8.0 (ASP.NET Core)
+- **Database:** MySQL 9
+- **ORM:** Entity Framework Core
+- **Authentication:** JWT
+- **Logging:** Serilog
+- **Mapping:** AutoMapper
 
+### Frontend
+- **Framework:** React 18
+- **Language:** TypeScript
+- **Build tool:** Vite
+- **Routing:** React Router v6
+- **HTTP:** Axios
+- **Styling:** CSS (vanilla)
+
+---
+
+## 📝 Další kroky
+
+### Backend
+- [ ] Role-based access control (admin features)
+- [ ] Swagger/OpenAPI dokumentace
+- [ ] Unit testing
+- [ ] API error handling improvement
+
+### Frontend
+- [ ] Implementace BooksPage s filtrováním
+- [ ] Book cards komponenty
+- [ ] Shopping cart
+- [ ] Checkout proces
+- [ ] User profil editace
+- [ ] Responsivní design
+- [ ] Form validace
+- [ ] Error handling UI
+- [ ] Loading states
+- [ ] Testing (Jest, React Testing Library)

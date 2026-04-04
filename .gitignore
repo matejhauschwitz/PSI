@@ -15,6 +15,12 @@ prototype/.env*
 # docker volumes
 dbdata/
 
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
 # Environment files
 .env
 

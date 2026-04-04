@@ -4,7 +4,7 @@ services:
     image: mysql:9
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: WEAez
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-your_mysql_password}
       MYSQL_DATABASE: bookstore
     ports:
       - "5006:3306"
@@ -19,7 +19,7 @@ services:
     ports:
       - "8006:8080"
     environment:
-      - JWT_SECRET_KEY=nejaky_tajny_klic
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your_jwt_secret_key}
       - ASPNETCORE_URLS=http://+:8080
     depends_on:
       - db

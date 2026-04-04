@@ -1,19 +1,26 @@
-all: clone-be run
+.PHONY: dev docker backend frontend help
 
-in:
-	docker exec -it sk07-web bash
+help:
+	@echo "Available commands:"
+	@echo "  make dev       - Start everything (Docker + Backend + Frontend)"
+	@echo "  make docker    - Start MySQL Docker container"
+	@echo "  make backend   - Start .NET backend"
+	@echo "  make frontend  - Start React frontend"
 
-build:
-	@echo "Building WEA_BE image..."
-	docker build -t hejsekvojtech/wea_be:latest .
+dev: docker backend frontend
+	@echo "All services are starting..."
+	@echo "Frontend:  http://localhost:3000"
+	@echo "Backend:   http://localhost:5118"
+	@echo "MySQL:     localhost:5006"
 
-run:
-	@echo "Running Docker Compose..."
-	docker compose up -d --build
+docker:
+	@echo "Starting MySQL Docker container..."
+	docker compose up -d
 
-db:
-	@echo "Starting DB..."
-	docker compose up -d --build db
+backend:
+	@echo "Starting .NET backend..."
+	cd api && dotnet run
 
-init:
-	docker network inspect cdb-network >/dev/null 2>&1 || docker network create --driver bridge cdb-network
+frontend:
+	@echo "Starting React frontend..."
+	cd ../frontend && npm run dev
