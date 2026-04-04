@@ -63,4 +63,9 @@ public class UserService : IUserService
         var dto = _mapper.Map<UserDetailDto>(user);
         return dto;
     }
+
+    public int GetUserCount()
+    {
+        return _ctx.Users.Count();
+    }
 }

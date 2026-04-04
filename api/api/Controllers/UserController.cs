@@ -64,4 +64,18 @@ public class UserController : ControllerBase
         UserDetailDto userDetailDto = _userService.GetUserDetail(user.UserName);
         return Ok(userDetailDto);
     }
-}
+
+    [HttpGet("count")]
+    public IActionResult GetUserCount()
+    {
+        try
+        {
+            int count = _userService.GetUserCount();
+            return Ok(new { count });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error getting user count: {Error}", ex.Message);
+            return BadRequest("Could not retrieve user count");
+        }
+    }
