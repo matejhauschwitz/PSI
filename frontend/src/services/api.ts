@@ -60,11 +60,6 @@ export const bookService = {
     return response.data
   },
 
-  getGenres: async () => {
-    const response = await api.get<string[]>('/books/genres')
-    return response.data
-  },
-
   getFavourites: async (page = 1, pageSize = 10) => {
     const response = await api.get<BooksResponse>('/books/favourites', {
       params: { page, pageSize },
