@@ -7,6 +7,7 @@ interface ProfileFormHeaderProps {
   onEmailChange: (value: string) => void
   onGenderChange: (value: string) => void
   onBirthdayChange: (value: string) => void
+  onProcessDataChange: (value: boolean) => void
 }
 
 export default function ProfileFormHeader({
@@ -14,7 +15,8 @@ export default function ProfileFormHeader({
   onNameChange,
   onEmailChange,
   onGenderChange,
-  onBirthdayChange
+  onBirthdayChange,
+  onProcessDataChange
 }: ProfileFormHeaderProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 space-y-4">
@@ -60,7 +62,7 @@ export default function ProfileFormHeader({
 
         <div>
           <label className="block text-xs font-semibold text-stone-600 mb-2 uppercase tracking-wider">
-            Pohlaví
+            Pohlaví <span className="text-red-500">*</span>
           </label>
           <select
             value={user.isMale ? 'male' : 'female'}
@@ -74,7 +76,7 @@ export default function ProfileFormHeader({
 
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-stone-600 mb-2 uppercase tracking-wider">
-            Narozeniny
+            Narozeniny <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
@@ -82,6 +84,20 @@ export default function ProfileFormHeader({
             onChange={(e) => onBirthdayChange(e.target.value)}
             className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={user.processData || false}
+              onChange={(e) => onProcessDataChange(e.target.checked)}
+              className="w-4 h-4 accent-blue-600 cursor-pointer"
+            />
+            <span className="text-sm text-stone-700">
+              Souhlasím se zpracováním osobních údajů <span className="text-red-500">*</span>
+            </span>
+          </label>
         </div>
       </div>
     </div>

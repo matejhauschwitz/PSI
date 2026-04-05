@@ -14,7 +14,9 @@ export default function AddressSection({
 }: AddressSectionProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 space-y-4">
-      <h3 className="font-bold text-stone-900 mb-4">{title}</h3>
+      <h3 className="font-bold text-stone-900 mb-4">
+        {title} <span className="text-red-500 text-sm">*</span>
+      </h3>
 
       <div className="space-y-3">
         <AddressField

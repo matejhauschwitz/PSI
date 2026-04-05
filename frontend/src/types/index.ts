@@ -7,13 +7,14 @@ export interface User {
   billingAddress?: Address
   isMale?: boolean
   birthDay?: string
+  processData?: boolean
   favouriteGerners?: string[]
 }
 
 export interface Address {
-  street?: string
+  streetAddress?: string
   city?: string
-  zipCode?: string
+  zip?: string
   country?: string
 }
 
@@ -43,9 +44,10 @@ export interface Comment {
 export interface Order {
   id?: number
   userId?: number
-  bookIds: number[]
+  books?: Book[]
+  bookIds?: number[]
   status?: string
-  paymentMethod: string
+  paymentMethod?: string | number
   totalPrice?: number
   createdAt?: string
 }

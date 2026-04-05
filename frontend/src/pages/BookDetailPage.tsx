@@ -2,10 +2,13 @@ import { useBookDetail } from '../hooks/useBookDetail'
 import BookDetailHeader from '../components/BookDetailHeader'
 import CommentsSection from '../components/CommentsSection'
 import { authService } from '../services/api'
+import { useCart } from '../context/CartContext'
+import toast from 'react-hot-toast'
 
 export default function BookDetailPage() {
   const { book, comments, loading, error, isFavourite, toggleFavourite, addComment } =
     useBookDetail()
+  const { addToCart } = useCart()
 
   const isAuthenticated = authService.isAuthenticated()
 
@@ -26,8 +29,8 @@ export default function BookDetailPage() {
   }
 
   const handleAddToCart = () => {
-    // TODO: Implement cart functionality
-    console.log('Add to cart:', book.id)
+    addToCart(book)
+    toast.success(`"${book.title}" přidáno do košíku`)
   }
 
   return (

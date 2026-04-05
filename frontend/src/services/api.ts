@@ -84,6 +84,8 @@ export const userService = {
   },
 
   updateUser: async (user: Partial<User>) => {
+    // Pošli data jak jsou - bez transformace
+    // User je již v backend formátu (StreetAddress, City, Zip, Country)
     return api.post('/user/update', user)
   },
 }
@@ -134,12 +136,27 @@ export const commentService = {
 // Order Service
 export const orderService = {
   createOrder: async (order: Order) => {
-    return api.post('/order/order', order)
+    // Backend má JsonNamingPolicy.CamelCase, takže odesílá camelCase
+    const payload = {
+      bookIds: order.bookIds,
+      paymentMethod: order.paymentMethod, // camelCase
+    }
+    return api.post('/order/order', payload)
   },
 
   getOrders: async () => {
-    const response = await api.get<Order[]>('/order/orders')
-    return response.data
+    const response = await api.get<any[]>('/order/orders')
+    // Transformuj backend data na frontend Order interface
+    return response.data.map((dto: any) => ({
+      id: dto.id,
+      userId: dto.userId,
+      books: dto.books || [],
+      bookIds: dto.books?.map((b: any) => b.id) || [],
+      status: dto.status || 'Unknown',
+      paymentMethod: dto.paymentMethod,
+      totalPrice: dto.totalPrice,
+      createdAt: dto.created ? new Date(dto.created).toISOString() : new Date().toISOString(),
+    }))
   },
 }
 

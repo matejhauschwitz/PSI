@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { userService, bookService } from '../services/api'
-import type { User, Address } from '../types'
-import { Save, AlertCircle, CheckCircle, Package } from 'lucide-react'
+import { userService, bookService, orderService } from '../services/api'
+import type { User, Address, Order } from '../types'
+import { Save, AlertCircle, CheckCircle, Package, ShoppingCart } from 'lucide-react'
 import ProfileHeader from '../components/ProfileHeader'
 import ProfileFormHeader from '../components/ProfileFormHeader'
 import AddressSection from '../components/AddressSection'
@@ -9,6 +9,7 @@ import GenreSelector from '../components/GenreSelector'
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -17,6 +18,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile()
+    loadOrders()
     loadGenres()
   }, [])
 
@@ -31,6 +33,15 @@ export default function ProfilePage() {
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadOrders = async () => {
+    try {
+      const userOrders = await orderService.getOrders()
+      setOrders(userOrders)
+    } catch (err) {
+      console.error('Error loading orders:', err)
     }
   }
 
@@ -53,7 +64,9 @@ export default function ProfilePage() {
       await userService.updateUser(user)
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
+      loadProfile()
     } catch (err: any) {
+      console.error('Save error:', err)
       setError(err.response?.data?.message || 'Nepodařilo se uložit profil')
     } finally {
       setSaving(false)
@@ -66,10 +79,13 @@ export default function ProfilePage() {
     type: 'address' | 'billingAddress' = 'address'
   ) => {
     if (!user) return
+    
+    const currentAddress = user[type] || {}
+    
     setUser({
       ...user,
       [type]: {
-        ...user[type],
+        ...currentAddress,
         [field]: value
       }
     })
@@ -82,6 +98,18 @@ export default function ProfilePage() {
       ? current.filter(g => g !== genre)
       : [...current, genre]
     setUser({ ...user, favouriteGerners: updated })
+  }
+
+  // Kontrola chybějících údajů potřebných pro nákup
+  const getMissingCheckoutData = (): string[] => {
+    if (!user) return []
+    const missing: string[] = []
+    if (!user.address?.streetAddress) missing.push('domovní adresa')
+    if (!user.billingAddress?.streetAddress) missing.push('fakturační adresa')
+    if (user.isMale === undefined || user.isMale === null) missing.push('pohlaví')
+    if (!user.birthDay) missing.push('datum narození')
+    if (!user.processData) missing.push('souhlas se zpracováním dat')
+    return missing
   }
 
   if (loading) {
@@ -109,6 +137,17 @@ export default function ProfilePage() {
     <div className="max-w-7xl mx-auto space-y-8">
       <ProfileHeader user={user} />
 
+      {/* Chybějící údaje pro nákup */}
+      {getMissingCheckoutData().length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
+          <ShoppingCart className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-amber-900 font-semibold">Pro nákup je potřeba vyplnit:</p>
+            <p className="text-amber-800 text-sm">{getMissingCheckoutData().join(', ')}</p>
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
@@ -133,6 +172,7 @@ export default function ProfilePage() {
             onEmailChange={(value) => setUser({ ...user, email: value })}
             onGenderChange={(value) => setUser({ ...user, isMale: value === 'male' })}
             onBirthdayChange={(value) => setUser({ ...user, birthDay: value })}
+            onProcessDataChange={(value) => setUser({ ...user, processData: value })}
           />
 
           <AddressSection
@@ -171,11 +211,55 @@ export default function ProfilePage() {
             Objednávky
           </h2>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 text-center">
-            <div className="text-5xl mb-4">📦</div>
-            <p className="text-stone-600 font-medium">Zatím žádné objednávky</p>
-            <p className="text-stone-500 text-sm mt-2">Vaše objednávky se budou zobrazovat zde</p>
-          </div>
+          {orders.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 text-center">
+              <div className="text-5xl mb-4">📦</div>
+              <p className="text-stone-600 font-medium">Zatím žádné objednávky</p>
+              <p className="text-stone-500 text-sm mt-2">Vaše objednávky se budou zobrazovat zde</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {orders.map((order) => {
+                const statusLabels: { [key: string]: { color: string; text: string } } = {
+                  'Pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Čekající' },
+                  'Processing': { color: 'bg-blue-100 text-blue-800', text: 'Zpracovávání' },
+                  'Completed': { color: 'bg-green-100 text-green-800', text: 'Dokončeno' },
+                  'Cancelled': { color: 'bg-red-100 text-red-800', text: 'Zrušeno' },
+                  'Unknown': { color: 'bg-gray-100 text-gray-800', text: 'Neznámý' },
+                }
+                const statusInfo = statusLabels[order.status || 'Unknown'] || { color: 'bg-gray-100 text-gray-800', text: order.status || 'Neznámý' }
+                
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-white rounded-xl shadow-sm border border-stone-200 p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1">
+                        <p className="font-semibold text-stone-900">Objednávka #{order.id}</p>
+                        <p className="text-sm text-stone-500">
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString('cs-CZ')
+                            : 'Dnes'}
+                        </p>
+                        <p className="text-sm text-stone-600 mt-1">
+                          {order.books?.length || order.bookIds?.length || 0} položek
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-stone-900">
+                          {order.totalPrice?.toFixed(2) || '0.00'} Kč
+                        </p>
+                        <span className={`inline-block text-xs px-2 py-1 rounded-full mt-2 font-medium ${statusInfo.color}`}>
+                          {statusInfo.text}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

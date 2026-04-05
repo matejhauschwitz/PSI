@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, User, Heart, LogOut } from 'lucide-react'
+import { BookOpen, User, Heart, LogOut, ShoppingCart } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { useCart } from '../context/CartContext'
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth()
+  const { cartCount } = useCart()
 
   return (
     <nav className="bg-white shadow-sm border-b border-stone-200 sticky top-0 z-10">
@@ -19,6 +21,16 @@ export default function Navbar() {
             <Link to="/books" className="text-stone-600 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium">
               <BookOpen className="h-5 w-5" />
               <span className="hidden sm:inline">Knihy</span>
+            </Link>
+
+            <Link to="/cart" className="relative text-stone-600 hover:text-blue-600 transition-colors flex items-center gap-1">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="hidden sm:inline">Košík</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             {isAuthenticated && (
