@@ -19,7 +19,7 @@ export default function ShippingAddressForm({ address, onChange }: ShippingAddre
           required
           type="text"
           placeholder="Ulice a číslo popisné"
-          className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={address.streetAddress}
           onChange={e => onChange('streetAddress', e.target.value)}
         />
@@ -28,7 +28,7 @@ export default function ShippingAddressForm({ address, onChange }: ShippingAddre
             required
             type="text"
             placeholder="Město"
-            className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={address.city}
             onChange={e => onChange('city', e.target.value)}
           />
@@ -36,7 +36,7 @@ export default function ShippingAddressForm({ address, onChange }: ShippingAddre
             required
             type="text"
             placeholder="PSČ"
-            className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={address.zip}
             onChange={e => onChange('zip', e.target.value)}
           />
@@ -45,7 +45,7 @@ export default function ShippingAddressForm({ address, onChange }: ShippingAddre
           required
           type="text"
           placeholder="Země"
-          className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={address.country}
           onChange={e => onChange('country', e.target.value)}
         />

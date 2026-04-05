@@ -43,7 +43,7 @@ export default function OrderSummary({ itemsCount, totalPrice, paymentMethod }: 
       </div>
       <div className="flex justify-between pt-2 text-lg font-bold text-stone-900">
         <span>Celkem</span>
-        <span className="text-emerald-600">{total.toFixed(2)} Kč</span>
+        <span className="text-blue-600">{total.toFixed(2)} Kč</span>
       </div>
     </div>
   )

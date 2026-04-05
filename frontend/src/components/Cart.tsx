@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CreditCard } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -21,8 +21,36 @@ export default function Cart() {
     country: '',
   })
   const [paymentMethod, setPaymentMethod] = useState('OnlineCard')
+  const [processData, setProcessData] = useState(false)
 
   const totalPrice = getCartTotal()
+
+  useEffect(() => {
+    // Načti uživatelský profil a předvyplň adresu
+    const loadUserAddress = async () => {
+      try {
+        const token = localStorage.getItem('jwt_token')
+        if (!token) return
+
+        const user = await userService.getUserDetail()
+        if (user.address) {
+          setAddress({
+            streetAddress: user.address.streetAddress || '',
+            city: user.address.city || '',
+            zip: user.address.zip || '',
+            country: user.address.country || '',
+          })
+        }
+        if (user.processData) {
+          setProcessData(user.processData)
+        }
+      } catch (err) {
+        console.error('Error loading user address:', err)
+      }
+    }
+
+    loadUserAddress()
+  }, [])
 
   const handleRemove = (bookId: number) => {
     removeFromCart(bookId)
@@ -88,6 +116,11 @@ export default function Cart() {
       return
     }
 
+    if (!processData) {
+      toast.error('Prosím souhlaste se zpracováním osobních údajů')
+      return
+    }
+
     if (!validateAddress()) return
 
     const token = localStorage.getItem('jwt_token')
@@ -144,7 +177,7 @@ export default function Cart() {
           <p className="text-stone-500 text-lg mb-6">Tvůj košík je prázdný.</p>
           <button
             onClick={() => navigate('/')}
-            className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Pokračovat v nákupu
           </button>
@@ -170,6 +203,18 @@ export default function Cart() {
                   address={address}
                   onChange={(field, value) => setAddress({ ...address, [field]: value })}
                 />
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={processData}
+                    onChange={(e) => setProcessData(e.target.checked)}
+                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                  />
+                  <span className="text-sm text-stone-700">
+                    Souhlasím se zpracováním osobních údajů <span className="text-red-500">*</span>
+                  </span>
+                </label>
 
                 <button
                   type="submit"

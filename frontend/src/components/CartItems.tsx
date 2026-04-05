@@ -32,7 +32,7 @@ export default function CartItems({ items, onRemove }: CartItemsProps) {
             <h3 className="font-bold text-stone-900 text-lg">{item.title}</h3>
             <p className="text-sm text-stone-500 mb-3">{item.author}</p>
             {item.genre && <p className="text-xs text-stone-500 mb-2">Žánr: {item.genre}</p>}
-            <div className="font-bold text-emerald-600 text-lg">
+            <div className="font-bold text-blue-600 text-lg">
               {item.price ? `${item.price.toFixed(2)} Kč` : 'Neuvedeno'}
             </div>
           </div>
