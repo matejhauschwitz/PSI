@@ -64,6 +64,22 @@ export default function Cart() {
     return paymentMethodMap[paymentMethod]
   }
 
+  const calculateTotalWithShipping = (): number => {
+    let total = totalPrice
+    switch (paymentMethod) {
+      case 'OnDelivery':
+        total = totalPrice + 50
+        break
+      case 'OnlineCard':
+        total = totalPrice * 1.01
+        break
+      case 'Transfer':
+        total = totalPrice
+        break
+    }
+    return total
+  }
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -101,7 +117,7 @@ export default function Cart() {
         id: orderId,
         bookIds: cartItems.map(item => item.id || 0),
         paymentMethod: paymentMethod,
-        totalPrice: totalPrice,
+        totalPrice: calculateTotalWithShipping(),
         status: 'Pending',
       }
 
@@ -145,7 +161,7 @@ export default function Cart() {
             <div className="bg-white rounded-lg shadow-sm border border-stone-200 p-6 sticky top-24">
               <h2 className="text-xl font-bold text-stone-900 mb-6">Souhrn Objednávky</h2>
 
-              <OrderSummary itemsCount={cartItems.length} totalPrice={totalPrice} />
+              <OrderSummary itemsCount={cartItems.length} totalPrice={totalPrice} paymentMethod={paymentMethod} />
 
               <form onSubmit={handleCheckout} className="space-y-6">
                 <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
