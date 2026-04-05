@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { bookService } from '../services/api'
+import api from '../services/api'
 import type { Book } from '../types'
 
 export function useHomeStats() {
@@ -27,9 +28,8 @@ export function useHomeStats() {
 
       // Počet uživatelů
       try {
-        const response = await fetch('/user/count')
-        const data = await response.json()
-        setTotalUsers(data.count || 0)
+        const response = await api.get<{ count: number }>('/user/count')
+        setTotalUsers(response.data.count || 0)
       } catch (err) {
         console.error('Error loading user count:', err)
       }
