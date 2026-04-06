@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EFModels.Enums;
 
 namespace EFModels.Models;
 
@@ -9,6 +10,7 @@ public class User
     public string Name { get; set; }
     public string UserName { get; set; }
     public string PasswordHash { get; set; }
+    public UserRole Role { get; set; } = UserRole.User;
     public Address? Address { get; set; }
     public Address? BillingAddress { get; set; }
     public bool? ProcessData { get; set; }

@@ -183,4 +183,73 @@ public class BookService : IBookService
         }
         return false;
     }
+
+    public List<BookDto> GetAllBooks()
+    {
+        var books = _ctx.Books.ToList();
+        return _mapper.Map<List<BookDto>>(books);
+    }
+
+    public bool CreateBook(BookDto bookDto)
+    {
+        try
+        {
+            var book = _mapper.Map<Book>(bookDto);
+            _ctx.Books.Add(book);
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateBook(int bookId, BookDto bookDto)
+    {
+        try
+        {
+            var book = _ctx.Books.Find(bookId);
+            if (book is null) return false;
+
+            book.Title = bookDto.Title;
+            book.Authors = bookDto.Authors;
+            book.Description = bookDto.Description;
+            book.Genre = bookDto.Genre;
+            book.ISBN10 = bookDto.ISBN10;
+            book.ISBN13 = bookDto.ISBN13;
+            book.Price = bookDto.Price;
+            book.PageCount = bookDto.PageCount;
+            book.PublicationYear = bookDto.PublicationYear;
+            book.CoverImageUrl = bookDto.CoverImageUrl;
+            book.Rating = bookDto.Rating;
+            book.TotalRatings = bookDto.TotalRatings;
+            book.IsHidden = bookDto.IsHidden;
+            book.LastUpdated = DateTime.Now;
+
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public bool DeleteBook(int bookId)
+    {
+        try
+        {
+            var book = _ctx.Books.Find(bookId);
+            if (book is null) return false;
+
+            _ctx.Books.Remove(book);
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 }

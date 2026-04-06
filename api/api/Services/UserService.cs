@@ -68,4 +68,53 @@ public class UserService : IUserService
     {
         return _ctx.Users.Count();
     }
+
+    public List<UserDetailDto> GetAllUsers()
+    {
+        var users = _ctx.Users.Include(x => x.Address).Include(x => x.BillingAddress).Include(x => x.FavouriteGerners).ToList();
+        return users.Select(u => _mapper.Map<UserDetailDto>(u)).ToList();
+    }
+
+    public bool DeleteUser(int userId)
+    {
+        var user = _ctx.Users.Find(userId);
+        if (user is null) return false;
+        
+        try
+        {
+            _ctx.Users.Remove(user);
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public bool CreateUser(string userName, string passwordHash, string name, string? email)
+    {
+        try
+        {
+            var existingUser = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
+            if (existingUser is not null) return false;
+
+            var newUser = new User
+            {
+                UserName = userName,
+                PasswordHash = passwordHash,
+                Name = name,
+                Email = email,
+                Role = UserRole.User
+            };
+
+            _ctx.Users.Add(newUser);
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 }

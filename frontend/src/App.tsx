@@ -12,6 +12,7 @@ import BookDetailPage from './pages/BookDetailPage'
 import FavouritesPage from './pages/FavouritesPage'
 import ProfilePage from './pages/ProfilePage'
 import OrderConfirmationPage from './pages/OrderConfirmationPage'
+import AdminPage from './pages/AdminPage'
 
 // Components
 import Navbar from './components/Navbar'
@@ -49,6 +50,10 @@ function App() {
               <Route
                 path="/profile"
                 element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />}
+              />
+              <Route
+                path="/admin"
+                element={isAuthenticated ? <AdminPage /> : <Navigate to="/login" />}
               />
             </Routes>
           </main>

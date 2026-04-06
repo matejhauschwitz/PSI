@@ -53,4 +53,9 @@ public interface IBookService
     /// <returns>List unikátních žánrů.</returns>
     List<string> GetUniqueGenres();
     public bool RemoveFromFavourites(int bookId, string userName);
+    
+    List<BookDto> GetAllBooks();
+    bool CreateBook(BookDto bookDto);
+    bool UpdateBook(int bookId, BookDto bookDto);
+    bool DeleteBook(int bookId);
 }

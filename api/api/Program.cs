@@ -86,6 +86,7 @@ builder.Services.AddAutoMapper(cfg =>
        .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
        .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+       .ForMember(dest => dest.Role, opt => opt.MapFrom(src => (int)src.Role))
        .ForMember(dest => dest.FavouriteGerners, opt =>
            opt.MapFrom(src => src.FavouriteGerners.Select(x => x.Name).ToList()))
        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))

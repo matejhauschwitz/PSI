@@ -87,4 +87,47 @@ public class OrderService : IOrderService
         var dtos = _mapper.Map<List<OrderDto>>(orders);
         return dtos;
     }
+
+    public List<OrderDto> GetAllOrders()
+    {
+        var orders = _ctx.Orders
+            .Include(x => x.Books)
+            .Include(x => x.User)
+            .ToList();
+        return _mapper.Map<List<OrderDto>>(orders);
+    }
+
+    public bool UpdateOrderStatus(int orderId, int status)
+    {
+        var order = _ctx.Orders.Find(orderId);
+        if (order is null) return false;
+
+        try
+        {
+            order.Status = (OrderStatus)status;
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public bool DeleteOrder(int orderId)
+    {
+        var order = _ctx.Orders.Find(orderId);
+        if (order is null) return false;
+
+        try
+        {
+            _ctx.Orders.Remove(order);
+            _ctx.SaveChanges();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 }
