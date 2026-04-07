@@ -7,5 +7,8 @@ namespace SPI.Services
     {
         int AddOrder(string username, List<int> bookIds, PaymentMethod paymentMethod);
         List<OrderDto> GetOrders(string username);
+        List<OrderDto> GetAllOrders();
+        bool UpdateOrderStatus(int orderId, int status);
+        bool DeleteOrder(int orderId);
     }
 }

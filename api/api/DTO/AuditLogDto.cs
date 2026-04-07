@@ -2,6 +2,7 @@
 
 public class AuditLogDto
 {
+    public int Id { get; set; }
     public string Original { get; set; }
     public string Updated { get; set; }
     public DateTime CreatedDate { get; set; }

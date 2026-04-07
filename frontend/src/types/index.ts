@@ -9,6 +9,7 @@ export interface User {
   birthDay?: string
   processData?: boolean
   favouriteGerners?: string[]
+  role?: number // 0 = User, 1 = Admin
 }
 
 export interface Address {

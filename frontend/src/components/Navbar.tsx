@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, User, Heart, LogOut, ShoppingCart } from 'lucide-react'
+import { BookOpen, User, Heart, LogOut, ShoppingCart, Settings } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../context/CartContext'
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, isAdmin } = useAuth()
   const { cartCount } = useCart()
 
   return (
@@ -43,6 +43,12 @@ export default function Navbar() {
                   <User className="h-5 w-5" />
                   <span className="hidden sm:inline">Profil</span>
                 </Link>
+                {isAdmin && (
+                  <Link to="/admin" className="text-amber-600 hover:text-amber-800 transition-colors flex items-center gap-1 font-medium">
+                    <Settings className="h-5 w-5" />
+                    <span className="hidden sm:inline">Admin</span>
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="text-stone-600 hover:text-red-600 transition-colors flex items-center gap-1"

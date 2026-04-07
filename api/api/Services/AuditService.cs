@@ -37,4 +37,35 @@ public class AuditService : IAuditService
     {
         return _mapper.Map<List<AuditLogDto>>(_ctx.AuditLogs);
     }
+
+    public List<AuditLogDto> GetAuditLogs(string? logType = null, string? userName = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var query = _ctx.AuditLogs.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(logType))
+        {
+            if (int.TryParse(logType, out int logTypeValue))
+            {
+                query = query.Where(x => x.LogType == logTypeValue);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(userName))
+        {
+            var normalizedUserName = userName.ToLower();
+            query = query.Where(x => x.userName.ToLower().Contains(normalizedUserName));
+        }
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(x => x.CreatedDate >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            query = query.Where(x => x.CreatedDate <= endDate.Value);
+        }
+
+        return _mapper.Map<List<AuditLogDto>>(query.ToList());
+    }
 }
