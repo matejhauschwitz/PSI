@@ -11,4 +11,5 @@ public class OrderDto
     public PaymentMethod? PaymentMethod { get; set; }
     public OrderStatus? Status { get; set; }
     public string? UserSnapshot {get; set; }
+    public string? UserName { get; set; }
 }

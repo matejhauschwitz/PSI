@@ -1,17 +1,4 @@
-import axios from 'axios'
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5118'
-})
-
-// Add authorization header if token exists
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('jwt_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+import api from './api'
 
 export interface AdminUser {
   id?: number
@@ -23,7 +10,7 @@ export interface AdminUser {
 
 export interface AdminOrder {
   id?: number
-  userId?: number
+  userName?: string
   totalPrice?: number
   status?: number
   created?: string

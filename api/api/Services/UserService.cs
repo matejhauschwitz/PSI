@@ -3,6 +3,7 @@ using EFModels.Data;
 using EFModels.Enums;
 using EFModels.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using SPI.DTO;
 
 namespace SPI.Services;
@@ -18,10 +19,41 @@ public class UserService : IUserService
         _mapper = mapper;
         _auditService = auditService;
     }
+
+    private static string HashPassword(string password, byte[] salt)
+    {
+        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+        byte[] hash = pbkdf2.GetBytes(20);
+        return Convert.ToBase64String(hash);
+    }
+
+    private static string CreatePasswordHash(string password)
+    {
+        byte[] salt = new byte[16];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(salt);
+        }
+        string hash = HashPassword(password, salt);
+        return Convert.ToBase64String(salt) + ":" + hash;
+    }
+
     public bool UpdateUser(string userName, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
     {
         var user = _ctx.Users.AsQueryable().Include(x => x.BillingAddress).Include(x => x.Address).SingleOrDefault(x => x.UserName == userName);
         if (user == null) return false;
+        return ApplyUserUpdate(user, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email);
+    }
+
+    public bool UpdateUserById(int id, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
+    {
+        var user = _ctx.Users.AsQueryable().Include(x => x.BillingAddress).Include(x => x.Address).SingleOrDefault(x => x.Id == id);
+        if (user == null) return false;
+        return ApplyUserUpdate(user, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email);
+    }
+
+    private bool ApplyUserUpdate(User user, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
+    {
         var oldUser = _mapper.Map<UserDetailDto>(user);
         user.Address = _mapper.Map<Address>(address);
         user.BillingAddress = _mapper.Map<Address>(billingAddress);
@@ -92,7 +124,7 @@ public class UserService : IUserService
         }
     }
 
-    public bool CreateUser(string userName, string passwordHash, string name, string? email)
+    public bool CreateUser(string userName, string password, string name, string? email)
     {
         try
         {
@@ -102,7 +134,7 @@ public class UserService : IUserService
             var newUser = new User
             {
                 UserName = userName,
-                PasswordHash = passwordHash,
+                PasswordHash = CreatePasswordHash(password),
                 Name = name,
                 Email = email,
                 Role = UserRole.User

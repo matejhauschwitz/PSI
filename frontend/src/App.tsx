@@ -19,7 +19,7 @@ import Navbar from './components/Navbar'
 import Cart from './components/Cart'
 
 function App() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading, isAdmin } = useAuth()
 
   if (loading) {
     return (
@@ -53,7 +53,7 @@ function App() {
               />
               <Route
                 path="/admin"
-                element={isAuthenticated ? <AdminPage /> : <Navigate to="/login" />}
+                element={isAuthenticated && isAdmin ? <AdminPage /> : <Navigate to="/login" />}
               />
             </Routes>
           </main>

@@ -1,0 +1,4 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function ProfileHeader({ user }) {
+    return (_jsx("div", { className: "bg-white rounded-2xl shadow-sm border border-stone-200 p-8", children: _jsxs("div", { className: "flex items-center gap-6", children: [_jsx("div", { className: "w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-md", children: user.name?.[0]?.toUpperCase() || user.userName?.[0]?.toUpperCase() || 'U' }), _jsxs("div", { className: "flex-1", children: [_jsx("h1", { className: "text-3xl font-bold text-stone-900", children: user.name || 'Uživatel' }), _jsxs("p", { className: "text-stone-500 text-sm font-medium", children: ["@", user.userName] }), user.email && _jsx("p", { className: "text-stone-500 text-sm", children: user.email })] })] }) }));
+}

@@ -153,7 +153,7 @@ export default function AdminPage() {
           {orders.map(order => (
             <tr key={order.id} className="border-b hover:bg-gray-50">
               <td className="px-4 py-2">{order.id}</td>
-              <td className="px-4 py-2">{order.userId}</td>
+              <td className="px-4 py-2">{order.userName}</td>
               <td className="px-4 py-2">{order.totalPrice?.toFixed(2)} Kč</td>
               <td className="px-4 py-2">
                 <select

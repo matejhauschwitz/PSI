@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import AddressField from './AddressField';
+export default function AddressSection({ title, address, onChange }) {
+    return (_jsxs("div", { className: "bg-white rounded-2xl shadow-sm border border-stone-200 p-8 space-y-4", children: [_jsxs("h3", { className: "font-bold text-stone-900 mb-4", children: [title, " ", _jsx("span", { className: "text-red-500 text-sm", children: "*" })] }), _jsxs("div", { className: "space-y-3", children: [_jsx(AddressField, { label: "Ulice", placeholder: "Ulice", value: address?.streetAddress || '', onChange: (value) => onChange('streetAddress', value) }), _jsxs("div", { className: "grid grid-cols-2 gap-3", children: [_jsx(AddressField, { label: "M\u011Bsto", placeholder: "M\u011Bsto", value: address?.city || '', onChange: (value) => onChange('city', value) }), _jsx(AddressField, { label: "PS\u010C", placeholder: "PS\u010C", value: address?.zip || '', onChange: (value) => onChange('zip', value) })] }), _jsx(AddressField, { label: "Zem\u011B", placeholder: "Zem\u011B", value: address?.country || '', onChange: (value) => onChange('country', value) })] })] }));
+}

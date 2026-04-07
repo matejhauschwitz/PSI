@@ -21,12 +21,6 @@ namespace EFModels.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Delete admin user
-            migrationBuilder.DeleteData(
-                table: "Users",
-                keyColumn: "UserName",
-                keyValue: "admin");
-
             migrationBuilder.DropColumn(
                 name: "Role",
                 table: "Users");

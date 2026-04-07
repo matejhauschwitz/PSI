@@ -52,7 +52,8 @@ public class AuditService : IAuditService
 
         if (!string.IsNullOrWhiteSpace(userName))
         {
-            query = query.Where(x => x.userName.ToLower().Contains(userName.ToLower()));
+            var normalizedUserName = userName.ToLower();
+            query = query.Where(x => x.userName.ToLower().Contains(normalizedUserName));
         }
 
         if (startDate.HasValue)

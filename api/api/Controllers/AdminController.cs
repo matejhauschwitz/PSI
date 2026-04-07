@@ -34,7 +34,7 @@ public class AdminController : ControllerBase
 
     /// <summary>
     /// Validates admin authorization from Bearer token.
-    /// Returns Forbid() if unauthorized.
+    /// Returns Unauthorized() if token is missing, Forbid() if not admin.
     /// </summary>
     private async Task<IActionResult?> AuthorizeAdminAsync()
     {
@@ -44,7 +44,7 @@ public class AdminController : ControllerBase
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith(bearerScheme))
         {
             _logger.LogWarning("Admin access attempt with missing or invalid authorization header");
-            return Forbid();
+            return Unauthorized();
         }
 
         var token = authHeader[bearerScheme.Length..].Trim();
@@ -80,14 +80,14 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost("users")]
-    public async Task<IActionResult> CreateUser([FromBody] UserDetailDto userDto)
+    public async Task<IActionResult> CreateUser([FromBody] AdminCreateUserRequest request)
     {
         var authResult = await AuthorizeAdminAsync();
         if (authResult is not null) return authResult;
 
         try
         {
-            bool success = _userService.CreateUser(userDto.UserName, userDto.PasswordHash, userDto.Name, userDto.Email);
+            bool success = _userService.CreateUser(request.UserName, request.Password, request.Name ?? request.UserName, request.Email);
             return success ? Ok("User created successfully") : BadRequest("Unable to create user");
         }
         catch (Exception ex)
@@ -105,8 +105,8 @@ public class AdminController : ControllerBase
 
         try
         {
-            bool success = _userService.UpdateUser(
-                userDto.UserName, 
+            bool success = _userService.UpdateUserById(
+                id,
                 userDto.Address, 
                 userDto.BillingAddress, 
                 userDto.ProcessData, 

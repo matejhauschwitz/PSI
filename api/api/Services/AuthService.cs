@@ -138,22 +138,33 @@ public class AuthService : IAuthService
     public UserDto? Authorize(string token)
     {
         var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
-        var expirationClaim = jwtToken?.Claims?.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp)?.Value;
-        if (expirationClaim is not null)
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey.Key));
+
+        try
         {
-            var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationClaim));
-            if (expirationTime < DateTimeOffset.UtcNow)
+            handler.ValidateToken(token, new TokenValidationParameters
             {
-                return null;
-            }
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidIssuer = "Bouraci",
+                ValidateAudience = true,
+                ValidAudience = "Gooners",
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            }, out var validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var userName = jwtToken.Claims.FirstOrDefault(c => c.Type == "username")?.Value;
+            if (userName == null) return null;
+
+            var user = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
+            return _mapper.Map<UserDto?>(user);
         }
-        var userName = jwtToken?.Claims?.FirstOrDefault(c => c.Type == "username")?.Value;
-
-        if (userName == null) return null;
-
-        var user = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
-        return _mapper.Map<UserDto?>(user);
+        catch
+        {
+            return null;
+        }
     }
 
     private string GenerateJwtToken(User user)

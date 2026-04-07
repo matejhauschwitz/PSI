@@ -79,10 +79,12 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<AuditLog, AuditLogDto>().ReverseMap();
     cfg.CreateMap<Order, OrderDto>()
         .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+        .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.UserName : null))
         .ReverseMap();
     cfg.CreateMap<User, UserDto>().ReverseMap();
     cfg.CreateMap<Address, AddressDto>().ReverseMap();
     cfg.CreateMap<User, UserDetailDto>()
+       .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
        .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
        .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))

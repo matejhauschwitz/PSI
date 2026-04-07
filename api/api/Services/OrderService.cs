@@ -102,6 +102,9 @@ public class OrderService : IOrderService
         var order = _ctx.Orders.Find(orderId);
         if (order is null) return false;
 
+        if (!Enum.IsDefined(typeof(OrderStatus), status))
+            return false;
+
         try
         {
             order.Status = (OrderStatus)status;
