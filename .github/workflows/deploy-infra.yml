@@ -28,5 +28,5 @@ jobs:
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: rg-bookstore-shared
           template: ./infrastructer/shared.bicep 
-          parameters: prefix=psi location=westeurope
+          parameters: prefix=psi location=polandcentral
           failOnStdErr: false

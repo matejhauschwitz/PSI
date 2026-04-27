@@ -41,7 +41,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// ... (RBAC role pro Storage zůstávají stejné, ty jsou v pořádku) ...
+
 resource storageContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(storageAccount.id, idDbSetup.id, 'StorageAccountContributor')
   scope: storageAccount
@@ -72,7 +72,7 @@ resource filePrivilegedContributor 'Microsoft.Authorization/roleAssignments@2022
   }
 }
 
-// --- MySQL Flexible Server (ZMĚNĚNO) ---
+// --- MySQL Flexible Server ---
 resource mysql 'Microsoft.DBforMySQL/flexibleServers@2023-12-30' = {
   name: 'mysql-${prefix}-${env}'
   location: location
@@ -96,11 +96,7 @@ resource mysql 'Microsoft.DBforMySQL/flexibleServers@2023-12-30' = {
     }
     network: {
       delegatedSubnetResourceId: subnetId
-      privateDnsZoneArmResourceId: privateDnsZone.id
-    }
-    authConfig: {
-      activeDirectoryAuth: 'Enabled' // Používáme Entra ID (dříve Azure AD)
-      passwordAuth: 'Disabled'       // Žádná hesla, jen identity!
+      privateDnsZoneResourceId: privateDnsZone.id
     }
   }
 }
@@ -112,7 +108,7 @@ resource mysql_diagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-pre
     workspaceId: lawId
     logs: [
       {
-        category: 'MySqlAuditLogs' // Jiný název kategorie pro MySQL
+        category: 'MySqlAuditLogs'
         enabled: true
       }
     ]
@@ -135,7 +131,7 @@ resource db_bookstore 'Microsoft.DBforMySQL/flexibleServers/databases@2023-12-30
   }
 }
 
-// DNS Zóna pro MySQL (ZMĚNĚNO)
+// DNS Zóna pro MySQL
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: '${prefix}-${env}.mysql.database.azure.com'
   location: 'global'
@@ -155,7 +151,7 @@ resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLin
   }
 }
 
-// Administrátor (Změněno na MySQL modul)
+// Administrátor
 module mysqlAdmin './database-admin.bicep' = {
   name: 'mysql-admin-assignment'
   params: {
