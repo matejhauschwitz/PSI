@@ -156,24 +156,37 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    try
+    try 
     {
-        // Attempt to open a connection to the database
+        Console.WriteLine("--- ZAHÁJENÍ DB DIAGNOSTIKY ---");
+        
+        var cs = dbContext.Database.GetConnectionString();
+        Console.WriteLine($"Connection string načten (délka: {cs?.Length ?? 0})");
+
+        Console.WriteLine("Pokus o otevření spojení...");
         dbContext.Database.OpenConnection();
-        Console.WriteLine("Database connection successful!");
+        Console.WriteLine("SPOJENÍ OK!");
         dbContext.Database.CloseConnection();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Database connection failed: {ex.Message}");
-    }
 
-    // migrate if needed, doing this with docker sucks in this stack
-    if (dbContext.Database.GetPendingMigrations().Any())
+        try {
+            Console.WriteLine("Kontrola migrací...");
+            if (dbContext.Database.GetPendingMigrations().Any()) {
+                Console.WriteLine("Aplikuji migrace...");
+                dbContext.Database.Migrate();
+                Console.WriteLine("Migrace dokončeny!");
+            } else {
+                Console.WriteLine("Žádné migrace nejsou potřeba.");
+            }
+        } catch (Exception migEx) {
+            Console.WriteLine($"CHYBA MIGRACÍ: {migEx.Message}");
+        }
+    } 
+    catch (Exception ex) 
     {
-        dbContext.Database.Migrate();
+        Console.WriteLine($"KRITICKÁ CHYBA DATABÁZE: {ex.Message}");
+        if (ex.InnerException != null) 
+            Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
     }
-
 }
 
 app.UseSwagger();
