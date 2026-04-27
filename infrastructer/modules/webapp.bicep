@@ -33,6 +33,7 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
     serverFarmId: appServicePlan.id
     virtualNetworkSubnetId: subnetId
     siteConfig: {
+      acrUseManagedIdentityCreds: true
       linuxFxVersion: 'DOCKER|${acrName}.azurecr.io/backend-api:latest'
       appSettings: [
         {
