@@ -12,7 +12,7 @@ param idDbSetupId string
 param idDbSetupName string
 param storageAccountName string
 param scriptsSubnetId string
-param developerIdentityEmail string = 'matej.hauschwitz@tul.cz' // TVŮJ MAIL
+param developerIdentityEmail string = 'matej.hauschwitz@tul.cz'
 param deployDebugTools bool = false
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 @secure()

@@ -2,6 +2,8 @@ targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
 param prefix string = 'bookstore'
+@secure()
+param administratorLoginPassword string
 
 param tags object = {
   project: 'bookstore'
@@ -53,6 +55,7 @@ module database './modules/database.bicep' = {
     scriptsSubnetId: network.outputs.snetScriptsId
     tags: tags
     lawId: monitoring.outputs.workspaceId
+    administratorLoginPassword: administratorLoginPassword
   }
 }
 

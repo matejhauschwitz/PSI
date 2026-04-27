@@ -6,6 +6,9 @@ param vnetId string
 param scriptsSubnetId string
 param tags object
 param lawId string = ''
+param administratorLogin string = 'mysqladmin'
+@secure()
+param administratorLoginPassword string
 
 // --- Identity for DB Setup/Bootstrap ---
 resource idDbSetup 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
@@ -94,6 +97,8 @@ resource mysql 'Microsoft.DBforMySQL/flexibleServers@2023-12-30' = {
       iops: 360
       autoGrow: 'Enabled'
     }
+    administratorLogin: administratorLogin
+    administratorLoginPassword: administratorLoginPassword
     network: {
       delegatedSubnetResourceId: subnetId
       privateDnsZoneResourceId: privateDnsZone.id

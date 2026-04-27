@@ -51,7 +51,7 @@ resource env_aca 'Microsoft.App/managedEnvironments@2023-05-01' = {
   }
 }
 
-// --- Identities (Identity zůstávají stejné, ty jsou univerzální) ---
+// --- Identities ---
 resource app_identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: 'id-${prefix}-${env}-app'
   location: location
@@ -101,7 +101,7 @@ resource backend_app 'Microsoft.App/containerApps@2023-05-01' = {
       activeRevisionsMode: 'Single'
       ingress: {
         external: true
-        targetPort: 8080 // ZMĚNĚNO NA 8080 PRO .NET
+        targetPort: 8080
         transport: 'auto'
       }
       registries: [
@@ -123,7 +123,7 @@ resource backend_app 'Microsoft.App/containerApps@2023-05-01' = {
           name: 'backend'
           image: containerImage
           env: [
-            // CONNECTION STRING PRO MYSQL + .NET (Používáme Managed Identity uživatele)
+            // CONNECTION STRING PRO MYSQL + .NET
             { name: 'ConnectionStrings__DefaultConnection', value: 'Server=${dbHost}; User Id=id-bookstore-${env}-app; Database=${dbName}; SSL Mode=Required;' }
             { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: aiConnectionString }
             { name: 'JWT_SECRET_KEY', value: jwtSecret } // Sjednoceno s tvým docker-compose
@@ -149,7 +149,7 @@ resource backend_app 'Microsoft.App/containerApps@2023-05-01' = {
 // --- Static Web App (Frontend) ---
 resource frontend_swa 'Microsoft.Web/staticSites@2022-09-01' = {
   name: 'swa-${prefix}-${env}'
-  location: 'westeurope' // SWA je globální, westeurope je pro metadata
+  location: 'westeurope'
   tags: tags
   sku: {
     name: 'Free'
@@ -158,7 +158,7 @@ resource frontend_swa 'Microsoft.Web/staticSites@2022-09-01' = {
   properties: {}
 }
 
-// --- Debugging Tools (PHPMyAdmin místo PGAdmin) ---
+// --- Debugging Tools ---
 resource phpmyadmin 'Microsoft.App/containerApps@2023-05-01' = if (deployDebugTools) {
   name: 'ca-${prefix}-${env}-phpmyadmin'
   location: location
