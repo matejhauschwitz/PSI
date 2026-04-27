@@ -4,6 +4,8 @@ param location string = resourceGroup().location
 param prefix string = 'bookstore'
 @secure()
 param administratorLoginPassword string
+@secure()
+param jwtSecret string
 
 param tags object = {
   project: 'bookstore'
@@ -68,6 +70,10 @@ module backendApp './modules/webapp.bicep' = {
     env: 'shared'
     acrName: acr.outputs.acrName
     subnetId: network.outputs.snetDevId
+    dbHost: database.outputs.mysqlFullyQualifiedDomainName
+    dbUser: 'mysqladmin'
+    dbPassword: administratorLoginPassword
+    jwtSecret: jwtSecret
   }
 }
 

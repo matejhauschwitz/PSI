@@ -3,7 +3,6 @@ name: Deploy Backend
 on:
   push:
     branches: [ "main" ]
-    # Spustí se jen když se změní kód backendu nebo Dockerfile
     paths:
       - 'api/**'
       - 'EFModels/**'

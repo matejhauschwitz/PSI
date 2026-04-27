@@ -2,7 +2,13 @@ param location string
 param prefix string
 param env string
 param acrName string
-param subnetId string 
+param subnetId string
+param dbHost string
+param dbUser string
+@secure()
+param dbPassword string
+@secure()
+param jwtSecret string
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: 'asp-${prefix}-${env}'
@@ -13,7 +19,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
   kind: 'linux'
   properties: {
-    reserved: true 
+    reserved: true
   }
 }
 
@@ -32,6 +38,14 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
           value: 'https://${acrName}.azurecr.io'
+        }
+        {
+          name: 'JWT_SECRET_KEY'
+          value: jwtSecret
+        }
+      {
+          name: 'ConnectionStrings__Default'
+          value: 'server=${dbHost};port=3306;database=bookstore;user=${dbUser};password=${dbPassword};'
         }
       ]
     }
