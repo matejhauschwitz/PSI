@@ -16,6 +16,7 @@ public sealed class BookMap : ClassMap<Book>
         AutoMap(config);
         Map(m => m.Id).Ignore();
         Map(m => m.IsHidden).Ignore();
+        Map(m => m.LastUpdated).Ignore();
         Map(m => m.ISBN10).Index(0);           // First column in CSV
         Map(m => m.ISBN13).Index(1);           // Second column
         Map(m => m.Title).Index(2);            // Third column
