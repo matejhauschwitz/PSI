@@ -147,7 +147,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-/*
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
@@ -170,7 +170,7 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
-*/
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
