@@ -36,8 +36,10 @@ jobs:
           ACR_LOGIN_SERVER=${{ vars.ACR_NAME }}.azurecr.io
           IMAGE_NAME=backend-api
           
-          docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest .
+          # PŘIDÁNO: -f api/Dockerfile
+          docker build -f api/Dockerfile -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest .
           
+          # Nahrajeme všechny tagy do ACR
           docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
 
       - name: Restart App Service
