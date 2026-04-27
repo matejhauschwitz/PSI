@@ -14,7 +14,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-Env.Load(".env");
+//Env.Load(".env");
 
 var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 
@@ -147,7 +147,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-
+/*
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
@@ -170,7 +170,7 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
-
+*/
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -187,6 +187,8 @@ app.UseCors(SPICors);
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/", () => "Backend jede!");
 
 app.Run();
 
