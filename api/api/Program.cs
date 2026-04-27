@@ -1,4 +1,3 @@
-using DotNetEnv;
 using EFModels.Data;
 using EFModels.Models;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +24,15 @@ builder.Host.UseSerilog((context, loggerConfiguration) =>
 });
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    var ConnectionString = builder.Configuration.GetConnectionString("Default");
-    var serverVersion = ServerVersion.AutoDetect(ConnectionString);
-    options.UseMySql(ConnectionString, serverVersion, o => { o.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30), null); });
+    try {
+        var connectionString = builder.Configuration.GetConnectionString("Default");
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 21));
+        options.UseMySql(connectionString, serverVersion, o => { 
+            o.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30), null); 
+        });
+    } catch (Exception ex) {
+        Console.WriteLine($"CHYBA PRI KONFIGURACI DB: {ex.Message}");
+    }
 });
 
 var SPICors = "_SPICors";
