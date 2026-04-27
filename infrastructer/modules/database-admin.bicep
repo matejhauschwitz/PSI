@@ -2,6 +2,7 @@ param serverName string
 param principalId string
 param principalName string
 param tenantId string
+param identityResourceId string
 
 resource mysql 'Microsoft.DBforMySQL/flexibleServers@2023-12-30' existing = {
   name: serverName
@@ -16,5 +17,6 @@ resource mysqlAdmin 'Microsoft.DBforMySQL/flexibleServers/administrators@2023-12
     login: principalName
     sid: principalId
     tenantId: tenantId
+    identityResourceId: identityResourceId
   }
 }

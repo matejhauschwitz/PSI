@@ -164,6 +164,7 @@ module mysqlAdmin './database-admin.bicep' = {
     principalId: idDbSetup.properties.principalId
     principalName: idDbSetup.name
     tenantId: subscription().tenantId
+    identityResourceId: idDbSetup.id
   }
 }
 
