@@ -38,7 +38,7 @@ jobs:
           
           cd api
           
-          docker build --platform linux/amd64 -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest .
+          docker build --platform linux/amd64 -t ${{ vars.ACR_NAME }}.azurecr.io/backend-api:latest .
           
           docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
 
