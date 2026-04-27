@@ -28,5 +28,5 @@ jobs:
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: rg-bookstore-shared
           template: ./infrastructer/shared.bicep 
-          parameters: prefix=psi location=polandcentral administratorLoginPassword=${{ secrets.DB_PASSWORD }}
+          parameters: prefix=psi location=polandcentral administratorLoginPassword=${{ secrets.DB_PASSWORD }} jwtSecret=${{ secrets.JWT_SECRET }}
           failOnStdErr: false
