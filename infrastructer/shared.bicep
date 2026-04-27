@@ -59,6 +59,18 @@ module database './modules/database.bicep' = {
   }
 }
 
+// --- Backend App Service ---
+module backendApp './modules/webapp.bicep' = {
+  name: 'backend-deployment'
+  params: {
+    location: location
+    prefix: prefix
+    env: 'shared'
+    acrName: acr.outputs.acrName
+    subnetId: network.outputs.snetDevId
+  }
+}
+
 output acrName string = acr.outputs.acrName
 output vnetId string = network.outputs.vnetId
 output snetDevId string = network.outputs.snetDevId
