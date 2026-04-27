@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,8 +28,7 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Log in to Azure Container Registry
-        run: |
-          az acr login --name ${{ vars.ACR_NAME }}
+        run: az acr login --name ${{ vars.ACR_NAME }}
 
       - name: Build and Push Docker Image
         run: |
@@ -40,3 +39,7 @@ jobs:
           docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest .
           
           docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
+
+      - name: Restart App Service
+        run: |
+          az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared
