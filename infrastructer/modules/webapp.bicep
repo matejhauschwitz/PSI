@@ -52,7 +52,8 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
-resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01-preview' existing = {
+
+resource acr 'Microsoft.ContainerRegistry/registries@2022-12-01' existing = {
   name: acrName
 }
 

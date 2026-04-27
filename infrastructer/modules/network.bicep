@@ -36,7 +36,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' = {
             {
               name: 'delegation'
               properties: {
-                serviceName: 'Microsoft.App/environments'
+                serviceName: 'Microsoft.Web/serverFarms'
               }
             }
           ]
