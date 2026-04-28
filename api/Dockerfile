@@ -1,8 +1,9 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /frontend-src
-COPY api/frontend/package*.json ./
+
+COPY frontend/package*.json ./
 RUN npm install
-COPY api/frontend/ ./
+COPY frontend/ ./
 RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
