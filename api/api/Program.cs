@@ -6,6 +6,7 @@ using Serilog;
 using SPI.DTO;
 using SPI.Models;
 using SPI.Services;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,10 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-//Env.Load(".env");
+if (builder.Environment.IsDevelopment())
+{
+    Env.Load(".env");
+}
 
 var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { adminService, type AdminUser, type AdminOrder, type AdminBook, type AdminAuditLog } from '../services/adminService'
+import Modal from '../components/Modal'
+import UserForm from '../components/UserForm'
+import BookForm from '../components/BookForm'
 
 export default function AdminPage() {
   const navigate = useNavigate()
@@ -13,6 +16,11 @@ export default function AdminPage() {
   const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([])
   const [loading, setLoading] = useState(false)
   const [filters, setFilters] = useState({ logType: '', userName: '', startDate: '', endDate: '' })
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add')
+  const [modalEntity, setModalEntity] = useState<'user' | 'book' | null>(null)
+  const [editUser, setEditUser] = useState<AdminUser | null>(null)
+  const [editBook, setEditBook] = useState<AdminBook | null>(null)
 
   useEffect(() => {
     checkAdminAccess()
@@ -104,6 +112,14 @@ export default function AdminPage() {
 
   const renderUsersTable = () => (
     <div className="overflow-x-auto">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => openUserModal()}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Přidat uživatele
+        </button>
+      </div>
       <table className="w-full text-sm">
         <thead className="bg-blue-100">
           <tr>
@@ -117,10 +133,10 @@ export default function AdminPage() {
         <tbody>
           {users.map(user => (
             <tr key={user.id} className="border-b hover:bg-gray-50">
-              <td className="px-4 py-2">{user.userName}</td>
-              <td className="px-4 py-2">{user.name}</td>
-              <td className="px-4 py-2">{user.email}</td>
-              <td className="px-4 py-2">{user.role === 1 ? 'Admin' : 'User'}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openUserModal(user)}>{user.userName}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openUserModal(user)}>{user.name}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openUserModal(user)}>{user.email}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openUserModal(user)}>{user.role === 1 ? 'Admin' : 'User'}</td>
               <td className="px-4 py-2 text-center">
                 <button
                   onClick={() => handleDelete('users', user.id)}
@@ -180,11 +196,28 @@ export default function AdminPage() {
           ))}
         </tbody>
       </table>
+      {/* Modal pro uživatele a knihy */}
+      <Modal open={modalOpen} onClose={closeModal} title={modalEntity === 'user' ? (modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele') : (modalMode === 'add' ? 'Přidat knihu' : 'Upravit knihu')}>
+        {modalEntity === 'user' && (
+          <UserForm user={editUser || undefined} onSubmit={handleUserFormSubmit} onCancel={closeModal} />
+        )}
+        {modalEntity === 'book' && (
+          <BookForm book={editBook || undefined} onSubmit={handleBookFormSubmit} onCancel={closeModal} />
+        )}
+      </Modal>
     </div>
   )
 
   const renderBooksTable = () => (
     <div className="overflow-x-auto">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => openBookModal()}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Přidat knihu
+        </button>
+      </div>
       <table className="w-full text-sm">
         <thead className="bg-blue-100">
           <tr>
@@ -198,10 +231,10 @@ export default function AdminPage() {
         <tbody>
           {books.map(book => (
             <tr key={book.id} className="border-b hover:bg-gray-50">
-              <td className="px-4 py-2">{book.title}</td>
-              <td className="px-4 py-2">{book.authors}</td>
-              <td className="px-4 py-2">{book.price?.toFixed(2)} Kč</td>
-              <td className="px-4 py-2">{book.isbn13 || book.isbn10}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.title}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.authors}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.price?.toFixed(2)} Kč</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.isbn13 || book.isbn10}</td>
               <td className="px-4 py-2 text-center">
                 <button
                   onClick={() => handleDelete('books', book.id)}
@@ -273,6 +306,73 @@ export default function AdminPage() {
     </div>
   )
 
+  // Otevření modalu pro přidání/úpravu uživatele
+  const openUserModal = (user?: AdminUser) => {
+    setModalEntity('user')
+    setModalMode(user ? 'edit' : 'add')
+    setEditUser(user || null)
+    setModalOpen(true)
+  }
+
+  // Otevření modalu pro přidání/úpravu knihy
+  const openBookModal = (book?: AdminBook) => {
+    setModalEntity('book')
+    setModalMode(book ? 'edit' : 'add')
+    setEditBook(book || null)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+    setEditUser(null)
+    setEditBook(null)
+    setModalEntity(null)
+  }
+
+  // Odeslání formuláře uživatele
+  const handleUserFormSubmit = async (user: AdminUser) => {
+    try {
+      if (modalMode === 'add') {
+        await adminService.createUser(user)
+        toast.success('Uživatel přidán')
+      } else if (modalMode === 'edit' && user.id) {
+        await adminService.updateUser(user.id, user)
+        toast.success('Uživatel upraven')
+      }
+      closeModal()
+      loadData()
+    } catch (e) {
+      toast.error('Chyba při ukládání uživatele')
+    }
+  }
+
+  // Odeslání formuláře knihy
+  const handleBookFormSubmit = async (book: AdminBook) => {
+    try {
+      if (modalMode === 'add') {
+        await adminService.createBook(book)
+        toast.success('Kniha přidána')
+      } else if (modalMode === 'edit' && book.id) {
+        await adminService.updateBook(book.id, book)
+        toast.success('Kniha upravena')
+      }
+      closeModal()
+      loadData()
+    } catch (e) {
+      toast.error('Chyba při ukládání knihy')
+    }
+  }
+
+  {/* Modal pro uživatele a knihy */}
+  <Modal open={modalOpen} onClose={closeModal} title={modalEntity === 'user' ? (modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele') : (modalMode === 'add' ? 'Přidat knihu' : 'Upravit knihu')}>
+    {modalEntity === 'user' && (
+      <UserForm user={editUser || undefined} onSubmit={handleUserFormSubmit} onCancel={closeModal} />
+    )}
+    {modalEntity === 'book' && (
+      <BookForm book={editBook || undefined} onSubmit={handleBookFormSubmit} onCancel={closeModal} />
+    )}
+  </Modal>
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -309,6 +409,34 @@ export default function AdminPage() {
             </>
           )}
         </div>
+
+        <Modal
+          open={modalOpen}
+          onClose={closeModal}
+          title={modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele'}
+        >
+          {modalMode === 'add' ? (
+            <div>
+              <input type="text" placeholder="Username" className="border rounded px-3 py-2" />
+              <input type="text" placeholder="Jméno" className="border rounded px-3 py-2" />
+              <input type="email" placeholder="Email" className="border rounded px-3 py-2" />
+              <select className="border rounded px-3 py-2">
+                <option value={1}>Admin</option>
+                <option value={0}>User</option>
+              </select>
+            </div>
+          ) : (
+            <div>
+              <input type="text" placeholder="Username" className="border rounded px-3 py-2" value={editUser?.userName} />
+              <input type="text" placeholder="Jméno" className="border rounded px-3 py-2" value={editUser?.name} />
+              <input type="email" placeholder="Email" className="border rounded px-3 py-2" value={editUser?.email} />
+              <select className="border rounded px-3 py-2">
+                <option value={1}>Admin</option>
+                <option value={0}>User</option>
+              </select>
+            </div>
+          )}
+        </Modal>
       </div>
     </div>
   )
