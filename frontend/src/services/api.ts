@@ -1,9 +1,13 @@
 import axios from 'axios'
 import type { User, Book, Comment, Order, LoginResponse, BooksResponse } from '../types'
 
+const isDevelopment = window.location.hostname === 'localhost';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/' 
-})
+  baseURL: isDevelopment 
+    ? 'http://localhost:5118' 
+    : '/'
+});
 
 // Add token to requests if it exists
 api.interceptors.request.use((config) => {

@@ -210,7 +210,10 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.MapFallbackToFile("index.html");
+if (!app.Environment.IsDevelopment())
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
 
