@@ -7,6 +7,7 @@ on:
       - 'api/**'         
       - 'EFModels/**'    
       - 'frontend/**'   
+      - 'api.tests/**'  # PŘIDÁNO: trigger i při změně testů
   workflow_dispatch:
 
 permissions:
@@ -19,6 +20,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore psi/api/SPI.sln
+
+      - name: Run Tests
+        run: dotnet test psi/api/api.tests/api.tests.csproj --configuration Release --collect:"XPlat Code Coverage"
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/TestResults/*.xml'
 
       - name: Azure Login
         uses: azure/login@v2

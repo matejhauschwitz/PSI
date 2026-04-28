@@ -392,3 +392,19 @@ FodyWeavers.xsd
 
 
 *.env
+
+# Výstupy kompilace (binárky)
+[Bb]in/
+[Oo]bj/
+
+# Výsledky testů a reporty pokrytí
+TestResults/
+coveragereport/
+*.cobertura.xml
+
+# Dočasné soubory IDE (Visual Studio / VS Code)
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
