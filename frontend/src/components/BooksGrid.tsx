@@ -8,6 +8,7 @@ interface BooksGridProps {
   onRetry: () => void
   hasActiveFilters: boolean
   onClearFilters: () => void
+  onPageChange: (page: number) => void // Přidaná prop pro navigaci
 }
 
 export default function BooksGrid({
@@ -16,8 +17,29 @@ export default function BooksGrid({
   error,
   onRetry,
   hasActiveFilters,
-  onClearFilters
+  onClearFilters,
+  onPageChange
 }: BooksGridProps) {
+  
+  // Pomocná funkce pro výpočet čísel stránek (max 3)
+  const getPageNumbers = () => {
+    if (!booksResponse) return [];
+    const { page, totalPages } = booksResponse;
+    let start = Math.max(1, page - 1);
+    let end = Math.min(totalPages, start + 2);
+    
+    // Korekce, pokud jsme na konci seznamu
+    if (end - start < 2) {
+      start = Math.max(1, end - 2);
+    }
+    
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -114,10 +136,49 @@ export default function BooksGrid({
             ))}
           </div>
 
-          {/* Pagination info */}
+          {/* --- KOMPAKTNÍ PAGER --- */}
           {booksResponse.totalPages > 1 && (
-            <div className="text-center text-stone-600 mt-8">
-              Strana {booksResponse.page} z {booksResponse.totalPages}
+            <div className="mt-12 flex flex-col items-center gap-4">
+              <div className="flex items-center gap-2 bg-white p-1 rounded-2xl border border-stone-200 shadow-sm">
+                {/* Šipka vlevo */}
+                <button
+                  onClick={() => onPageChange(booksResponse.page - 1)}
+                  disabled={booksResponse.page === 1}
+                  className="p-2 rounded-xl hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span className="block w-5 h-5">←</span>
+                </button>
+
+                {/* Čísla stránek */}
+                <div className="flex items-center">
+                  {getPageNumbers().map(pageNum => (
+                    <button
+                      key={pageNum}
+                      onClick={() => onPageChange(pageNum)}
+                      className={`min-w-[40px] h-10 flex items-center justify-center rounded-xl font-medium transition-colors ${
+                        booksResponse.page === pageNum
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-stone-600 hover:bg-stone-100'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Šipka vpravo */}
+                <button
+                  onClick={() => onPageChange(booksResponse.page + 1)}
+                  disabled={booksResponse.page === booksResponse.totalPages}
+                  className="p-2 rounded-xl hover:bg-stone-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span className="block w-5 h-5">→</span>
+                </button>
+              </div>
+              
+              <div className="text-xs font-medium text-stone-400 uppercase tracking-wider">
+                Strana {booksResponse.page} z {booksResponse.totalPages}
+              </div>
             </div>
           )}
         </>

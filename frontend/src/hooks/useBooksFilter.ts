@@ -6,11 +6,15 @@ export function useBooksFilter() {
   const [booksResponse, setBooksResponse] = useState<BooksResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
   const [title, setTitle] = useState('')
   const [genre, setGenre] = useState('')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [genres, setGenres] = useState<string[]>([])
+  
+  const [page, setPage] = useState(1)
+  const pageSize = 20
 
   useEffect(() => {
     loadGenres()
@@ -18,15 +22,15 @@ export function useBooksFilter() {
 
   useEffect(() => {
     loadBooks()
-  }, [genre])
+  }, [page, genre]) 
 
-  const loadBooks = async () => {
+  const loadBooks = async (targetPage = page) => {
     try {
       setLoading(true)
       setError(null)
       const response = await bookService.getBooks(
-        1,
-        20,
+        targetPage,
+        pageSize,
         title,
         genre,
         minPrice ? parseFloat(minPrice) : undefined,
@@ -51,15 +55,18 @@ export function useBooksFilter() {
   }
 
   const handleSearch = () => {
-    loadBooks()
+    setPage(1)
+    if (page === 1) loadBooks(1)
   }
 
   const handleGenreChange = (value: string) => {
+    setPage(1)
     setGenre(value)
   }
 
   const handlePriceBlur = () => {
-    loadBooks()
+    setPage(1)
+    if (page === 1) loadBooks(1)
   }
 
   const clearFilters = () => {
@@ -67,9 +74,10 @@ export function useBooksFilter() {
     setGenre('')
     setMinPrice('')
     setMaxPrice('')
+    setPage(1)
   }
 
-  const hasActiveFilters = title || genre || minPrice || maxPrice
+  const hasActiveFilters = !!(title || genre || minPrice || maxPrice)
 
   return {
     booksResponse,
@@ -89,6 +97,8 @@ export function useBooksFilter() {
     handlePriceBlur,
     clearFilters,
     hasActiveFilters,
-    loadBooks
+    loadBooks,
+    page,
+    setPage
   }
 }

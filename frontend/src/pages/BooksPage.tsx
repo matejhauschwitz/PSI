@@ -1,6 +1,7 @@
 import { useBooksFilter } from '../hooks/useBooksFilter'
 import BooksFilters from '../components/BooksFilters'
 import BooksGrid from '../components/BooksGrid'
+import { useEffect } from 'react'
 
 export default function BooksPage() {
   const {
@@ -21,8 +22,14 @@ export default function BooksPage() {
     handlePriceBlur,
     clearFilters,
     hasActiveFilters,
-    loadBooks
+    loadBooks,
+    page, 
+    setPage 
   } = useBooksFilter()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [booksResponse?.page]);
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -48,6 +55,7 @@ export default function BooksPage() {
         onRetry={loadBooks}
         hasActiveFilters={hasActiveFilters}
         onClearFilters={clearFilters}
+        onPageChange={(newPage) => setPage(newPage)}
       />
     </div>
   )
