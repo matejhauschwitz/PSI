@@ -77,6 +77,16 @@ module backendApp './modules/webapp.bicep' = {
   }
 }
 
+resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = {
+  name: 'stapp-psi-frontend-shared'
+  location: 'westeurope'
+  sku: {
+    name: 'Free'
+    tier: 'Free'
+  }
+  properties: {}
+}
+
 output acrName string = acr.outputs.acrName
 output vnetId string = network.outputs.vnetId
 output snetDevId string = network.outputs.snetDevId
