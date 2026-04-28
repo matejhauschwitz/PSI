@@ -37,10 +37,10 @@ jobs:
           IMAGE_NAME=backend-api
           
           docker build --platform linux/amd64 \
-            -f api/api/Dockerfile \
+            -f api/Dockerfile \
             -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG \
             -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest \
-            api
+            .
           
           docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
 
