@@ -208,6 +208,7 @@ app.MapControllers();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseRouting();
 
 app.MapFallbackToFile("index.html");
 
