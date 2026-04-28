@@ -31,4 +31,10 @@
     <ProjectReference Include="..\EFModels\EFModels.csproj" />
   </ItemGroup>
 
+<ItemGroup>
+  <None Update="Data/data_mock.csv">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+
 </Project>
