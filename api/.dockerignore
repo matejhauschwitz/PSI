@@ -29,3 +29,9 @@ README.md
 !.git/packed-refs
 !.git/refs/heads/**
 dbdata/
+
+prototype/
+**/.git
+**/.vs
+**/bin
+**/obj

@@ -1,13 +1,12 @@
-name: Deploy Backend and Frontend
+name: Deploy Bookstore
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'api/**'
-      - 'EFModels/**'
-      - 'frontend/**'         
-      - 'api/Dockerfile'      
+      - 'api/**'         
+      - 'EFModels/**'    
+      - 'frontend/**'   
   workflow_dispatch:
 
 permissions:
@@ -33,7 +32,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          ls -R
           IMAGE_TAG=${{ github.sha }}
           ACR_LOGIN_SERVER=${{ vars.ACR_NAME }}.azurecr.io
           IMAGE_NAME=backend-api
