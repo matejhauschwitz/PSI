@@ -1,10 +1,8 @@
 import axios from 'axios'
 import type { User, Book, Comment, Order, LoginResponse, BooksResponse } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5118'
-
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: import.meta.env.VITE_API_URL || '/api' 
 })
 
 // Add token to requests if it exists

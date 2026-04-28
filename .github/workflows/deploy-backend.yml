@@ -1,4 +1,4 @@
-name: Deploy Backend
+name: Deploy Backend and Frontend
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
     paths:
       - 'api/**'
       - 'EFModels/**'
-      - 'Dockerfile'
+      - 'frontend/**'         
+      - 'api/Dockerfile'      
   workflow_dispatch:
 
 permissions:
@@ -36,9 +37,10 @@ jobs:
           ACR_LOGIN_SERVER=${{ vars.ACR_NAME }}.azurecr.io
           IMAGE_NAME=backend-api
           
-          cd api
-          
-          docker build --platform linux/amd64 -t ${{ vars.ACR_NAME }}.azurecr.io/backend-api:latest .
+          docker build --platform linux/amd64 \
+            -f api/Dockerfile \
+            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG \
+            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest .
           
           docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
 

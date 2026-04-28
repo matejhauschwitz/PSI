@@ -206,7 +206,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", () => "Backend jede!");
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
 
