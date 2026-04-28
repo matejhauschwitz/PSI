@@ -79,7 +79,7 @@ module backendApp './modules/webapp.bicep' = {
 
 resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = {
   name: 'stapp-psi-frontend-shared'
-  location: 'polandcentral'
+  location: 'eastus2'
   sku: {
     name: 'Free'
     tier: 'Free'
