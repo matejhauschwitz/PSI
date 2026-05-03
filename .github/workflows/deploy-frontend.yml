@@ -77,7 +77,6 @@ jobs:
 
           echo "Using storage: $ACCOUNT_NAME"
 
-          echo "Enabling static website feature..."
           az storage blob service-properties update \
             --account-name "$ACCOUNT_NAME" \
             --account-key "$ACCOUNT_KEY" \
@@ -85,11 +84,11 @@ jobs:
             --404-document index.html \
             --index-document index.html
 
-          echo "Uploading files to \$web container..."
+          echo "Uploading files from ./dist to \$web container..."
           az storage blob upload-batch \
             --account-name "$ACCOUNT_NAME" \
             --account-key "$ACCOUNT_KEY" \
-            --source ./frontend/dist \
+            --source ./dist \
             --destination '$web' \
             --overwrite
 
