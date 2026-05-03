@@ -2,7 +2,7 @@ name: Deploy Infrastructure
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feature/split-deploy" ]
     paths:
       - 'infrastructer/**' 
       - '.github/workflows/deploy-infra.yml'

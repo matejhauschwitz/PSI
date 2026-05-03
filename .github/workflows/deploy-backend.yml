@@ -2,7 +2,6 @@ name: Deploy Bookstore
 
 on:
   push:
-    # ZMĚNA: Změň 'main' na testovací větev. Až to odladíš, vrátíš sem 'main'
     branches: [ "feature/split-deploy" ] 
     paths:
       - 'api/**'         
