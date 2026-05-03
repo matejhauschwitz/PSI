@@ -141,5 +141,4 @@ jobs:
 
           # 5. Vytiskne URL do GitHub Action Summary
           WEB_URL=$(az storage account show -n $ACCOUNT_NAME -g rg-bookstore-shared --query "primaryEndpoints.web" -o tsv)
-          echo "### 🚀 Frontend úspěšně nasazen!" >> $GITHUB_STEP_SUMMARY
-          echo "Adresa tvého webu je: **$WEB_URL**" >> $GITHUB_STEP_SUMMARY
+          echo "Adresa webu je: **$WEB_URL**" >> $GITHUB_STEP_SUMMARY

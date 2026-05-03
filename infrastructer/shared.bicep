@@ -78,7 +78,7 @@ module backendApp './modules/webapp.bicep' = {
 }
 
 resource frontendStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: 'stfrontend${uniqueString(resourceGroup().id)}' 
+  name: take('bookstore${uniqueString(resourceGroup().id)}', 24)
   location: location
   sku: {
     name: 'Standard_LRS'
