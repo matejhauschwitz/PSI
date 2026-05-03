@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { Book, BooksResponse } from '../types'
+import type { BooksResponse } from '../types'
 
 interface BooksGridProps {
   booksResponse: BooksResponse | null

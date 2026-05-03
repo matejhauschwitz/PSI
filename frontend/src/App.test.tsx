@@ -36,16 +36,14 @@ describe('App Component', () => {
       isAuthenticated: false,
       isAdmin: false,
       loading: true,
-      user: null,
+      userRole: null,
       login: vi.fn(),
       logout: vi.fn(),
-      register: vi.fn(),
     })
 
     render(<App />)
 
     expect(screen.getByText('Načítání...')).toBeInTheDocument()
-    // Ujistíme se, že se nevykreslil obsah aplikace (Navbar chybí)
     expect(screen.queryByText('Navbar Mock')).not.toBeInTheDocument()
   })
 
@@ -54,10 +52,9 @@ describe('App Component', () => {
       isAuthenticated: false,
       isAdmin: false,
       loading: false,
-      user: null,
+      userRole: null,
       login: vi.fn(),
       logout: vi.fn(),
-      register: vi.fn(),
     })
 
     // Změníme URL v jsdom, aby BrowserRouter začal na /books
@@ -74,10 +71,9 @@ describe('App Component', () => {
         isAuthenticated: false, // Nepřihlášený!
         isAdmin: false,
         loading: false,
-        user: null,
+        userRole: null,
         login: vi.fn(),
         logout: vi.fn(),
-        register: vi.fn(),
       })
 
       window.history.pushState({}, 'Profile', '/profile')
@@ -93,10 +89,9 @@ describe('App Component', () => {
         isAuthenticated: true, // Přihlášený!
         isAdmin: false,
         loading: false,
-        user: { id: 1, name: 'Test' } as any,
+        userRole: null,
         login: vi.fn(),
         logout: vi.fn(),
-        register: vi.fn(),
       })
 
       window.history.pushState({}, 'Profile', '/profile')
@@ -113,10 +108,9 @@ describe('App Component', () => {
         isAuthenticated: true, // Je sice přihlášený...
         isAdmin: false,        // ...ale není admin!
         loading: false,
-        user: { id: 1, name: 'Běžný Uživatel' } as any,
+        userRole: null,
         login: vi.fn(),
         logout: vi.fn(),
-        register: vi.fn(),
       })
 
       window.history.pushState({}, 'Admin', '/admin')
@@ -131,10 +125,9 @@ describe('App Component', () => {
         isAuthenticated: true, // Přihlášený
         isAdmin: true,         // Je Admin!
         loading: false,
-        user: { id: 1, name: 'Admin', role: 1 } as any,
+        userRole: 1,
         login: vi.fn(),
         logout: vi.fn(),
-        register: vi.fn(),
       })
 
       window.history.pushState({}, 'Admin', '/admin')

@@ -1,77 +1,50 @@
-name: Deploy Bookstore
+name: Deploy Backend
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'api/**'         
-      - 'EFModels/**'    
-      - 'frontend/**'   
+      - 'api/**'
+      - 'EFModels/**'
       - 'api.tests/**'
   workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
-  actions: read
-  pull-requests: write
 
 jobs:
-  build-and-deploy:
+  test-backend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore api/api/SPI.csproj
+      - name: Restore & Test
+        run: |
+          dotnet restore api/api/SPI.csproj
+          dotnet test api.tests/api.tests.csproj --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[EFModels]EFModels.Migrations.*"
 
-      - name: Run Backend Tests
-        run: dotnet test api.tests/api.tests.csproj --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[EFModels]EFModels.Migrations.*"
-
-      - name: Generate Backend Coverage Report
+      - name: Generate Coverage Report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
           reports: '**/TestResults/*/coverage.cobertura.xml'
           targetdir: 'coveragereport'
           reporttypes: 'MarkdownSummary'
 
-      - name: Add Backend Coverage to Summary
+      - name: Add Coverage to Summary
         if: always()
         run: cat coveragereport/Summary.md >> $GITHUB_STEP_SUMMARY
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Frontend Dependencies
-        working-directory: ./frontend
-        run: npm ci 
-
-      - name: Run Frontend Tests
-        working-directory: ./frontend
-        run: npx vitest run --coverage
-
-      - name: Generate Frontend Coverage Summary
-        uses: irongut/CodeCoverageSummary@v1.3.0
-        if: always()
-        with:
-          filename: frontend/coverage/cobertura-coverage.xml
-          badge: true
-          format: markdown
-          output: both
-
-      - name: Add Frontend Coverage to Summary
-        if: always()
-        run: |
-          echo "### Frontend Test Metrics" >> $GITHUB_STEP_SUMMARY
-          cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+  deploy-backend:
+    needs: test-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Azure Login
         uses: azure/login@v2
@@ -80,23 +53,18 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Log in to Azure Container Registry
-        run: az acr login --name ${{ vars.ACR_NAME }}
-
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker
         run: |
-          IMAGE_TAG=${{ github.sha }}
-          ACR_LOGIN_SERVER=${{ vars.ACR_NAME }}.azurecr.io
-          IMAGE_NAME=backend-api
+          ACR_SERVER=${{ vars.ACR_NAME }}.azurecr.io
+          IMAGE_NAME=$ACR_SERVER/backend-api
           
-          docker build --platform linux/amd64 \
-            -f api/Dockerfile \
-            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG \
-            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest \
-            .
+          az acr login --name ${{ vars.ACR_NAME }}
           
-          docker push -a $ACR_LOGIN_SERVER/$IMAGE_NAME
+          docker build --platform linux/amd64 -f api/Dockerfile \
+            -t $IMAGE_NAME:${{ github.sha }} \
+            -t $IMAGE_NAME:latest .
+          
+          docker push -a $IMAGE_NAME
 
       - name: Restart App Service
-        run: |
-          az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared
+        run: az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared

@@ -74,8 +74,7 @@ describe('RegisterPage', () => {
         email: 'jan@novak.cz',
         userName: 'jannovak',
         password: 'tajneheslo',
-        favouriteGerners: [],
-        confirmPassword: undefined
+        favouriteGerners: []
       })
       expect(mockNavigate).toHaveBeenCalledWith('/login')
     })

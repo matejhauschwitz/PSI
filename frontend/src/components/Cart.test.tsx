@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import Cart from './Cart'
 import * as CartContext from '../context/CartContext'
 import { orderService, userService } from '../services/api'
+import { fireEvent } from '@testing-library/react'
 import toast from 'react-hot-toast'
 
 // --- Mock Setup ---

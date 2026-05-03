@@ -35,7 +35,7 @@ describe('FavouritesBooksGrid', () => {
     totalRecords: 2,
     totalPages: 1,
     page: 1,
-    limit: 20
+    pageSize: 20
   }
 
   const renderWithRouter = (ui: React.ReactElement) => {

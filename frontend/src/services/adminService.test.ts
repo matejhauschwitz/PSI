@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { adminService } from './adminService'
+import { AdminBook, adminService } from './adminService'
 import api from './api'
 
 // Namockujeme náš api objekt (typicky Axios), abychom nevolali skutečný backend
@@ -82,13 +82,13 @@ describe('adminService', () => {
   })
 
   it('createBook posts a new book', async () => {
-    const newBook = { title: 'Nová kniha' }
+    const newBook = { title: 'Nová kniha' } as AdminBook
     await adminService.createBook(newBook)
     expect(api.post).toHaveBeenCalledWith('/admin/books', newBook)
   })
 
   it('updateBook puts updated book data', async () => {
-    const updatedBook = { title: 'Upravená kniha' }
+    const updatedBook = { title: 'Upravená kniha' } as AdminBook
     await adminService.updateBook(201, updatedBook)
     expect(api.put).toHaveBeenCalledWith('/admin/books/201', updatedBook)
   })

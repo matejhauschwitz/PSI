@@ -21,7 +21,6 @@ export default function BooksFilters({
   title,
   setTitle,
   genre,
-  setGenre,
   minPrice,
   setMinPrice,
   maxPrice,

@@ -23,7 +23,6 @@ export default function BooksPage() {
     clearFilters,
     hasActiveFilters,
     loadBooks,
-    page, 
     setPage 
   } = useBooksFilter()
 

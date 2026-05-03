@@ -1,12 +1,8 @@
 import axios from 'axios'
-import type { User, Book, Comment, Order, LoginResponse, BooksResponse } from '../types'
-
-const isDevelopment = window.location.hostname === 'localhost';
+import type { User, Book, Comment, Order, BooksResponse } from '../types'
 
 const api = axios.create({
-  baseURL: isDevelopment 
-    ? 'http://localhost:5118' 
-    : '/'
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5118'
 });
 
 // Add token to requests if it exists

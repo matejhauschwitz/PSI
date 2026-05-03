@@ -1,6 +1,6 @@
 import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import BooksCarousel from './BooksCarousel'
 import type { Book } from '../types'

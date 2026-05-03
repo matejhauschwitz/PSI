@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import AdminPage from './AdminPage'
-import { adminService } from '../services/adminService'
+import { AdminBook, adminService } from '../services/adminService'
 import toast from 'react-hot-toast'
 
 // --- MOCKY ---
@@ -59,7 +59,7 @@ describe('AdminPage', () => {
             { id: 101, userName: 'user', totalPrice: 500, status: 0, created: '2026-05-01T10:00:00Z' }
         ])
         vi.spyOn(adminService, 'getBooks').mockResolvedValue([
-            { id: 201, title: 'Kniha', authors: 'Autor', price: 300, isbn13: '123456789' }
+            { id: 201, title: 'Kniha', authors: 'Autor', price: 300, isbN13: '123456789'} as AdminBook
         ])
         vi.spyOn(adminService, 'getAuditLogs').mockResolvedValue([
             { id: 301, userName: 'admin', logType: 1, createdDate: '2026-05-01T10:00:00Z' }
