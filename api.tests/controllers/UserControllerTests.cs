@@ -90,10 +90,12 @@ namespace api.tests.Controllers
                 Email = "test@test.com",
                 FavouriteGerners = new List<string> { "Action" }, // Změna na stringy
             };
+            
             _userServiceMock
                 .Setup(s =>
                     s.UpdateUser(
                         "testuser",
+                        request.Name,
                         request.Address,
                         request.BillingAddress,
                         request.ProcessData,
@@ -101,7 +103,8 @@ namespace api.tests.Controllers
                         request.BirthDay,
                         request.FavouriteGerners,
                         request.Referral,
-                        request.Email
+                        request.Email,
+                        request.Role
                     )
                 )
                 .Returns(true);
@@ -128,14 +131,16 @@ namespace api.tests.Controllers
                 .Setup(s =>
                     s.UpdateUser(
                         It.IsAny<string>(),
+                        It.IsAny<string>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<AddressDto>(),
-                        It.IsAny<bool>(),
-                        It.IsAny<bool>(),
-                        It.IsAny<DateTime>(),
+                        It.IsAny<bool?>(),
+                        It.IsAny<bool?>(),
+                        It.IsAny<DateTime?>(),
                         It.IsAny<List<string>>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Returns(false);

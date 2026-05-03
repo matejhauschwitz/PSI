@@ -123,7 +123,8 @@ namespace api.tests.Controllers
                         It.IsAny<string>(),
                         It.IsAny<string>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Returns(true);
@@ -144,7 +145,8 @@ namespace api.tests.Controllers
                         It.IsAny<string>(),
                         It.IsAny<string>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Returns(false);
@@ -167,7 +169,8 @@ namespace api.tests.Controllers
                         It.IsAny<string>(),
                         It.IsAny<string>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Throws(new Exception());
@@ -188,6 +191,7 @@ namespace api.tests.Controllers
                 .Setup(s =>
                     s.UpdateUserById(
                         It.IsAny<int>(),
+                        It.IsAny<string>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<bool?>(),
@@ -195,7 +199,8 @@ namespace api.tests.Controllers
                         It.IsAny<DateTime?>(),
                         It.IsAny<List<string>>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Returns(true);
@@ -214,6 +219,7 @@ namespace api.tests.Controllers
                 .Setup(s =>
                     s.UpdateUserById(
                         It.IsAny<int>(),
+                        It.IsAny<string>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<bool?>(),
@@ -221,7 +227,8 @@ namespace api.tests.Controllers
                         It.IsAny<DateTime?>(),
                         It.IsAny<List<string>>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Returns(false);
@@ -233,13 +240,14 @@ namespace api.tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateUser_WhenExceptionThrown_ShouldReturnBadRequest()
+public async Task UpdateUser_WhenExceptionThrown_ShouldReturnBadRequest()
         {
             SetupValidAdmin();
             _userServiceMock
                 .Setup(s =>
                     s.UpdateUserById(
                         It.IsAny<int>(),
+                        It.IsAny<string>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<AddressDto>(),
                         It.IsAny<bool?>(),
@@ -247,7 +255,8 @@ namespace api.tests.Controllers
                         It.IsAny<DateTime?>(),
                         It.IsAny<List<string>>(),
                         It.IsAny<string>(),
-                        It.IsAny<string>()
+                        It.IsAny<string>(),
+                        It.IsAny<int>()
                     )
                 )
                 .Throws(new Exception());

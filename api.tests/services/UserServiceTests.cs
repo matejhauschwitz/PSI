@@ -100,15 +100,17 @@ namespace api.tests.Services
             // Act - Narozeniny zítra
             var futureDate = DateTime.Today.AddDays(1);
             var result = _userService.UpdateUser(
-                "test_user",
-                null,
-                null,
-                null,
-                null,
-                futureDate,
-                new List<string>(),
-                null,
-                null
+                "test_user",           
+                "Test",                
+                null,                  
+                null,                  
+                null,                  
+                null,                  
+                futureDate,            
+                new List<string>(),    
+                null,                  
+                null,                  
+                0                      
             );
 
             // Assert
@@ -139,6 +141,7 @@ namespace api.tests.Services
             var genresToUpdate = new List<string> { "Sci-Fi", "Fantasy" };
             var result = _userService.UpdateUser(
                 "test_user",
+                "Test",
                 null,
                 null,
                 true,
@@ -146,7 +149,8 @@ namespace api.tests.Services
                 DateTime.Now.AddYears(-20),
                 genresToUpdate,
                 "referral_code",
-                "email@test.cz"
+                "email@test.cz",
+                0
             );
 
             // Assert
