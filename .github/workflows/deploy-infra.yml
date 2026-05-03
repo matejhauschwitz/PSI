@@ -26,10 +26,10 @@ jobs:
 
       - name: Bicep Lint & Validate
         run: |
-          az bicep build --file ./infrastructure/shared.bicep
+          az bicep build --file ./infrastructer/shared.bicep
           az deployment group validate \
             --resource-group rg-bookstore-shared \
-            --template-file ./infrastructure/shared.bicep \
+            --template-file ./infrastructer/shared.bicep \
             --parameters prefix=psi location=polandcentral \
                          administratorLoginPassword=${{ secrets.DB_PASSWORD }} \
                          jwtSecret=${{ secrets.JWT_SECRET }}
@@ -52,7 +52,7 @@ jobs:
         with:
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: rg-bookstore-shared
-          template: ./infrastructure/shared.bicep 
+          template: ./infrastructer/shared.bicep 
           parameters: >
             prefix=psi 
             location=polandcentral 
