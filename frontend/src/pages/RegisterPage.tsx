@@ -20,7 +20,7 @@ export default function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
@@ -32,9 +32,10 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      await authService.register({
-        ...formData
-      })
+      const { confirmPassword, ...dataToSubmit } = formData;
+      
+      await authService.register(dataToSubmit)
+      
       navigate('/login')
     } catch (err) {
       setError('Registrace se nezdařila. Zkuste jiné jméno.')
