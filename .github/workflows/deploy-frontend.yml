@@ -64,15 +64,25 @@ jobs:
       - name: Upload to Azure Storage
         run: |
           # Dynamické nalezení storage accountu
-          ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared --query "[?starts_with(name, 'stfrontend')].name" -o tsv)
-          ACCOUNT_KEY=$(az storage account keys list -g rg-bookstore-shared -n $ACCOUNT_NAME --query "[0].value" -o tsv)
+          ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared \
+            --query "[?starts_with(name, 'stfrontend')].name | [0]" \
+            -o tsv)
+
+          ACCOUNT_KEY=$(az storage account keys list \
+            -g rg-bookstore-shared \
+            -n "$ACCOUNT_NAME" \
+            --query "[0].value" \
+            -o tsv)
+
+          echo "Using storage: $ACCOUNT_NAME"
+          echo "Key length: ${#ACCOUNT_KEY}"
 
           az storage blob service-properties update \
-            --account-name $ACCOUNT_NAME \
-            --account-key $ACCOUNT_KEY \
-            --static-website true \
-            --404-document index.html \
-            --index-document index.html
+            --account-name "$ACCOUNT_NAME" \
+            --account-key "$ACCOUNT_KEY" \
+            --static-website \
+            --index-document index.html \
+            --404-document index.html
           
           # Nahrání souborů pomocí OIDC
           az storage blob upload-batch \
