@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([])
   const [loading, setLoading] = useState(false)
   const [filters, setFilters] = useState({ logType: '', userName: '', startDate: '', endDate: '' })
+  const [selectedLog, setSelectedLog] = useState<AdminAuditLog | null>(null)
   
   // Stavy modalu
   const [modalOpen, setModalOpen] = useState(false)
@@ -130,11 +131,18 @@ export default function AdminPage() {
     setModalOpen(true)
   }
 
+  const openAuditModal = (log: AdminAuditLog) => {
+  setModalEntity(null);
+  setSelectedLog(log);
+  setModalOpen(true);
+  };
+
   const closeModal = () => {
     setModalOpen(false)
     setEditUser(null)
     setEditBook(null)
     setModalEntity(null)
+    setSelectedLog(null);
   }
 
   const handleUserFormSubmit = async (user: AdminUser) => {
@@ -347,7 +355,11 @@ export default function AdminPage() {
           </thead>
           <tbody>
             {auditLogs.map(log => (
-              <tr key={log.id} className="border-b hover:bg-gray-50">
+              <tr 
+                key={log.id} 
+                className="border-b hover:bg-gray-50 cursor-pointer" 
+                onClick={() => openAuditModal(log)}
+              >
                 <td className="px-4 py-2">{log.id}</td>
                 <td className="px-4 py-2">{log.userName}</td>
                 <td className="px-4 py-2">{log.logType}</td>
@@ -410,11 +422,11 @@ export default function AdminPage() {
           )}
         </div>
 
-        {/* --- JEDEN UNIVERZÁLNÍ MODAL --- */}
         <Modal
           open={modalOpen}
           onClose={closeModal}
-          title={getModalTitle()}
+          title={selectedLog ? `Detail auditu č. ${selectedLog.id}` : getModalTitle()}
+          maxWidth={selectedLog ? 'max-w-5xl' : 'max-w-md'}
         >
           {modalEntity === 'user' && (
             <UserForm 
@@ -430,6 +442,39 @@ export default function AdminPage() {
               onCancel={closeModal} 
             />
           )}
+        {selectedLog && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+              <div>
+                <span className="font-bold">Uživatel:</span> {selectedLog.userName}
+              </div>
+              <div>
+                <span className="font-bold">Datum:</span> {new Date(selectedLog.createdDate!).toLocaleString('cs-CZ')}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-bold text-red-600 mb-2">Původní hodnoty</h4>
+                <pre className="bg-red-50 p-3 rounded border border-red-100 overflow-auto max-h-60 text-xs">
+                  {selectedLog.original ? JSON.stringify(JSON.parse(selectedLog.original), null, 2) : 'Žádná data'}
+                </pre>
+              </div>
+              <div>
+                <h4 className="font-bold text-green-600 mb-2">Nové hodnoty</h4>
+                <pre className="bg-green-50 p-3 rounded border border-green-100 overflow-auto max-h-60 text-xs">
+                  {selectedLog.updated ? JSON.stringify(JSON.parse(selectedLog.updated), null, 2) : 'Žádná data'}
+                </pre>
+              </div>
+            </div>
+            
+            <div className="flex justify-end mt-4">
+              <button onClick={closeModal} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                Zavřít
+              </button>
+            </div>
+          </div>
+        )}
         </Modal>
 
       </div>

@@ -5,9 +5,16 @@ interface ModalProps {
   title?: string
   onClose: () => void
   children: React.ReactNode
+  maxWidth?: 'max-w-md' | 'max-w-lg' | 'max-w-2xl' | 'max-w-5xl' | 'max-w-7xl' | 'max-w-full'
 }
 
-export default function Modal({ open, title, onClose, children }: ModalProps) {
+export default function Modal({ 
+  open, 
+  title, 
+  onClose, 
+  children, 
+  maxWidth = 'max-w-md'
+}: ModalProps) {
   useEffect(() => {
     if (!open) return
     const handleEsc = (e: KeyboardEvent) => {
@@ -18,17 +25,18 @@ export default function Modal({ open, title, onClose, children }: ModalProps) {
   }, [open, onClose])
 
   if (!open) return null
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 p-4">
+      <div className={`bg-white rounded-lg shadow-lg w-full ${maxWidth} p-6 relative max-h-[90vh] overflow-y-auto`}>
         <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
+          className="absolute top-2 right-4 text-3xl text-gray-400 hover:text-gray-700"
           onClick={onClose}
           aria-label="Zavřít"
         >
           ×
         </button>
-        {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
+        {title && <h2 className="text-xl font-bold mb-4 pr-8">{title}</h2>}
         {children}
       </div>
     </div>
