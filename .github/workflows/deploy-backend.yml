@@ -102,21 +102,44 @@ jobs:
         run: |
           az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared
 
-      # --- FRONTEND NASAZENÍ ---
-      - name: Get Static Web App Deployment Token
-        id: get-swa-token
-        run: |
-          SWA_TOKEN=$(az staticwebapp secrets list --name stapp-psi-frontend-shared --resource-group rg-bookstore-shared --query "properties.apiKey" -o tsv)
-          echo "SWA_TOKEN=$SWA_TOKEN" >> $GITHUB_ENV
-          echo "::add-mask::$SWA_TOKEN" # Skryje token v lozích
-
-      - name: Deploy Frontend to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
+      # --- FRONTEND NASAZENÍ DO STORAGE ACCOUNTU ---
+      - name: Build Frontend
+        working-directory: ./frontend
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
-        with:
-          azure_static_web_apps_api_token: ${{ env.SWA_TOKEN }}
-          action: "upload"
-          app_location: "./frontend"
-          output_location: "dist"
-          skip_api_build: true
+        run: |
+          npm run build
+
+      - name: Deploy Frontend to Azure Storage
+        run: |
+          # 1. Najde název nového Storage Accountu pro frontend
+          ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared --query "[?starts_with(name, 'stfrontend')].name" -o tsv)
+          
+          if [ -z "$ACCOUNT_NAME" ]; then
+            echo "Storage Account nebyl nalezen. Ujisti se, že proběhlo nasazení Bicep infrastruktury."
+            exit 1
+          fi
+
+          # 2. Získá přístupový klíč k účtu
+          ACCOUNT_KEY=$(az storage account keys list -g rg-bookstore-shared -n $ACCOUNT_NAME --query "[0].value" -o tsv)
+
+          # 3. Zapne funkci Static Website
+          az storage blob service-properties update \
+            --account-name $ACCOUNT_NAME \
+            --account-key $ACCOUNT_KEY \
+            --static-website true \
+            --404-document index.html \
+            --index-document index.html
+
+          # 4. Nahraje zkompilovaný kód do webového kontejneru $web
+          az storage blob upload-batch \
+            --account-name $ACCOUNT_NAME \
+            --account-key $ACCOUNT_KEY \
+            --source ./frontend/dist \
+            --destination '$web' \
+            --overwrite
+
+          # 5. Vytiskne URL do GitHub Action Summary
+          WEB_URL=$(az storage account show -n $ACCOUNT_NAME -g rg-bookstore-shared --query "primaryEndpoints.web" -o tsv)
+          echo "### 🚀 Frontend úspěšně nasazen!" >> $GITHUB_STEP_SUMMARY
+          echo "Adresa tvého webu je: **$WEB_URL**" >> $GITHUB_STEP_SUMMARY
