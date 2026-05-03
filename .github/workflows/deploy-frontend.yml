@@ -43,6 +43,8 @@ jobs:
   deploy-frontend:
     needs: test-and-build
     runs-on: ubuntu-latest
+    outputs:
+      WEB_URL: ${{ steps.deploy.outputs.WEB_URL }}
     steps:
       - uses: actions/checkout@v4
       
@@ -64,12 +66,25 @@ jobs:
         run: |
           set -e
           ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared --query "[?contains(name, 'bookstore')].name | [0]" -o tsv)
+          
           ACCOUNT_KEY=$(az storage account keys list -g rg-bookstore-shared -n "$ACCOUNT_NAME" --query "[0].value" -o tsv)
 
-          az storage blob service-properties update --account-name "$ACCOUNT_NAME" --account-key "$ACCOUNT_KEY" --static-website true --404-document index.html --index-document index.html
-          az storage blob upload-batch --account-name "$ACCOUNT_NAME" --account-key "$ACCOUNT_KEY" --source ./dist --destination '$web' --overwrite
+          az storage blob service-properties update \
+            --account-name "$ACCOUNT_NAME" \
+            --account-key "$ACCOUNT_KEY" \
+            --static-website true \
+            --404-document index.html \
+            --index-document index.html
+
+          az storage blob upload-batch \
+            --account-name "$ACCOUNT_NAME" \
+            --account-key "$ACCOUNT_KEY" \
+            --source ./dist \
+            --destination '$web' \
+            --overwrite
 
           WEB_URL=$(az storage account show -n "$ACCOUNT_NAME" -g rg-bookstore-shared --query "primaryEndpoints.web" -o tsv)
+          
           echo "WEB_URL=$WEB_URL" >> $GITHUB_OUTPUT
           echo "### Frontend nasazen! 🚀" >> $GITHUB_STEP_SUMMARY
           echo "Adresa: $WEB_URL" >> $GITHUB_STEP_SUMMARY
@@ -84,7 +99,7 @@ jobs:
         uses: treosh/lighthouse-ci-action@v10
         id: lighthouse_audit
         with:
-          urls: ${{ steps.deploy-frontend.outputs.WEB_URL }}
+          urls: ${{ needs.deploy-frontend.outputs.WEB_URL }}
           uploadArtifacts: true
           temporaryPublicStorage: true
 
