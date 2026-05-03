@@ -64,8 +64,7 @@ jobs:
       - name: Upload to Azure Storage
         run: |
           set -e
-          set -o pipefail
-
+          
           ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared \
             --query "[?contains(name, 'bookstore')].name | [0]" \
             -o tsv)
@@ -77,15 +76,20 @@ jobs:
             -o tsv)
 
           echo "Using storage: $ACCOUNT_NAME"
-          echo "Key length: ${#ACCOUNT_KEY}"
 
-          echo "Waiting for storage..."
-          sleep 15
+          echo "Enabling static website feature..."
+          az storage blob service-properties update \
+            --account-name "$ACCOUNT_NAME" \
+            --account-key "$ACCOUNT_KEY" \
+            --static-website true \
+            --404-document index.html \
+            --index-document index.html
 
+          echo "Uploading files to \$web container..."
           az storage blob upload-batch \
             --account-name "$ACCOUNT_NAME" \
             --account-key "$ACCOUNT_KEY" \
-            --source ./dist \
+            --source ./frontend/dist \
             --destination '$web' \
             --overwrite
 
@@ -95,5 +99,4 @@ jobs:
             --query "primaryEndpoints.web" \
             -o tsv)
 
-          echo "### Frontend nasazen! 🚀" >> $GITHUB_STEP_SUMMARY
           echo "Adresa: $WEB_URL" >> $GITHUB_STEP_SUMMARY
