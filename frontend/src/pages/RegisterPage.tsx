@@ -33,8 +33,7 @@ export default function RegisterPage() {
 
     try {
       await authService.register({
-        ...formData,
-        confirmPassword: undefined,
+        ...formData
       })
       navigate('/login')
     } catch (err) {

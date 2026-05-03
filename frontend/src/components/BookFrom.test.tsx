@@ -56,7 +56,6 @@ describe('BookForm', () => {
   })
 
   it('zavolá onSubmit se správnými daty při odeslání', async () => {
-    const user = userEvent.setup()
     const { container } = render(
       <BookForm book={defaultBook} onSubmit={mockSubmit} onCancel={mockCancel} />
     )

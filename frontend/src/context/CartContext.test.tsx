@@ -5,8 +5,8 @@ import { CartProvider, useCart } from './CartContext'
 import { Book } from '../types'
 
 describe('CartContext & useCart', () => {
-  const mockBook: Book = { id: 1, title: 'Testovací Kniha', price: 200 }
-  const mockBook2: Book = { id: 2, title: 'Druhá Kniha', price: 350 }
+  const mockBook = { id: 1, title: 'Testovací Kniha', price: 200 } as Book
+  const mockBook2 = { id: 2, title: 'Druhá Kniha', price: 350 } as Book
 
   // Wrapper, který obalí testovaný hook do Provideru
   const wrapper = ({ children }: { children: React.ReactNode }) => (

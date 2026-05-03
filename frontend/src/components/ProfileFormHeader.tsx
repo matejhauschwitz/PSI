@@ -1,5 +1,4 @@
 import type { User } from '../types'
-import { Save } from 'lucide-react'
 
 interface ProfileFormHeaderProps {
   user: User
