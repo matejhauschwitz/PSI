@@ -1,5 +1,8 @@
-﻿namespace SPI.DTO;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace SPI.DTO;
+
+[ExcludeFromCodeCoverage] // A tenhle atribut přímo nad třídu
 public class BookDto
 {
     public int Id { get; set; }

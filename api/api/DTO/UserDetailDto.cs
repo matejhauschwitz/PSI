@@ -1,6 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+
 
 namespace SPI.DTO;
+
+[ExcludeFromCodeCoverage] // A tenhle atribut přímo nad třídu
 
 public class UserDetailDto
 {

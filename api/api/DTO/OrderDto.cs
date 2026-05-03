@@ -1,7 +1,9 @@
-﻿using EFModels.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using EFModels.Enums;
 
 namespace SPI.DTO;
 
+[ExcludeFromCodeCoverage] // A tenhle atribut přímo nad třídu
 public class OrderDto
 {
     public int Id { get; set; }

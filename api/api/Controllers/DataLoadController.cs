@@ -15,8 +15,8 @@ public class DataLoadController : ControllerBase
 {
     private readonly ILogger<DataLoadController> _logger;
     private readonly FilePathOptions _options;
-    private readonly LoadFromCsvService _loadFromCsvService;
-    private readonly LoadFromCdbService _loadFromStringService;
+    private readonly ILoadFromCsvService _loadFromCsvService;
+    private readonly ILoadFromCdbService _loadFromStringService;
 
     /// <summary>
     /// Konstruktor pro DataLoadController.
@@ -24,13 +24,18 @@ public class DataLoadController : ControllerBase
     /// <param name="logger">Služba pro logování chyb a informací.</param>
     /// <param name="ctx">Databázový kontext pro manipulaci s daty.</param>
     /// <param name="options">Možnosti nastavení cesty k souborům.</param>
-    public DataLoadController(ILogger<DataLoadController> logger, DatabaseContext ctx, FilePathOptions options, LoadFromCsvService loadFromCsvService, LoadFromCdbService loadFromStringService)
+    public DataLoadController(
+        ILogger<DataLoadController> logger,
+        DatabaseContext ctx,
+        FilePathOptions options,
+        ILoadFromCsvService loadFromCsvService,
+        ILoadFromCdbService loadFromStringService
+    )
     {
         _logger = logger;
         _options = options;
         _loadFromCsvService = loadFromCsvService;
         _loadFromStringService = loadFromStringService;
-
     }
 
     /// <summary>
