@@ -7,7 +7,7 @@ on:
       - 'api/**'         
       - 'EFModels/**'    
       - 'frontend/**'   
-      - 'api.tests/**'  # PŘIDÁNO: trigger i při změně testů
+      - 'api.tests/**'
   workflow_dispatch:
 
 permissions:
@@ -21,6 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --- BACKEND ---
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -38,6 +39,19 @@ jobs:
         with:
           name: test-results
           path: '**/TestResults/*.xml'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci 
+
+      - name: Run Frontend Tests
+        working-directory: ./frontend
+        run: npx vitest run
 
       - name: Azure Login
         uses: azure/login@v2
