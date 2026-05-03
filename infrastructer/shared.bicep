@@ -94,13 +94,13 @@ resource frontendStorage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 resource staticWebsite 'Microsoft.Storage/storageAccounts/blobServices@2021-09-01' = {
   parent: frontendStorage
   name: 'default'
-  properties: {
+  properties: any({
     staticWebsite: {
       enabled: true
       indexDocument: 'index.html'
       errorDocument404Path: 'index.html'
     }
-  }
+  })
 }
 
 output frontendUrl string = frontendStorage.properties.primaryEndpoints.web
