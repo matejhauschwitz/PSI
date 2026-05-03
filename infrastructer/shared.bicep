@@ -6,6 +6,7 @@ param prefix string = 'bookstore'
 param administratorLoginPassword string
 @secure()
 param jwtSecret string
+var uniqueSuffix = uniqueString(resourceGroup().id)
 
 param tags object = {
   project: 'bookstore'
@@ -78,17 +79,31 @@ module backendApp './modules/webapp.bicep' = {
 }
 
 resource frontendStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: take('bookstore${uniqueString(resourceGroup().id)}', 24)
+  name: take('bookstore${prefix}${uniqueSuffix}', 24)
   location: location
   sku: {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
   properties: {
-    allowBlobPublicAccess: true
+    allowBlobPublicAccess: false
   }
 }
 
+
+resource staticWebsite 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
+  parent: frontendStorage
+  name: 'default'
+  properties: any({
+    staticWebsite: {
+      enabled: true
+      indexDocument: 'index.html'
+      errorDocument404Path: 'index.html'
+    }
+  })
+}
+
+output frontendUrl string = frontendStorage.properties.primaryEndpoints.web
 output acrName string = acr.outputs.acrName
 output vnetId string = network.outputs.vnetId
 output snetDevId string = network.outputs.snetDevId

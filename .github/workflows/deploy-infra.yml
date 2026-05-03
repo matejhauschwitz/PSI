@@ -2,7 +2,7 @@ name: Deploy Infrastructure
 
 on:
   push:
-    branches: [ "feature/split-deploy" ]
+    branches: [ "main" ]
     paths:
       - 'infrastructer/**' 
       - '.github/workflows/deploy-infra.yml'
@@ -13,11 +13,32 @@ permissions:
   contents: read
 
 jobs:
-  bicep-deploy:
+  bicep-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Bicep Lint & Validate
+        run: |
+          az bicep build --file ./infrastructure/shared.bicep
+          az deployment group validate \
+            --resource-group rg-bookstore-shared \
+            --template-file ./infrastructure/shared.bicep \
+            --parameters prefix=psi location=polandcentral \
+                         administratorLoginPassword=${{ secrets.DB_PASSWORD }} \
+                         jwtSecret=${{ secrets.JWT_SECRET }}
+
+  bicep-deploy:
+    needs: bicep-validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -26,10 +47,20 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Shared Resources
+        id: deploy
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: rg-bookstore-shared
-          template: ./infrastructer/shared.bicep 
-          parameters: prefix=psi location=polandcentral administratorLoginPassword=${{ secrets.DB_PASSWORD }} jwtSecret=${{ secrets.JWT_SECRET }}
+          template: ./infrastructure/shared.bicep 
+          parameters: >
+            prefix=psi 
+            location=polandcentral 
+            administratorLoginPassword=${{ secrets.DB_PASSWORD }} 
+            jwtSecret=${{ secrets.JWT_SECRET }}
           failOnStdErr: false
+
+      - name: Display Deployment Outputs
+        run: |
+          echo "Frontend URL: ${{ steps.deploy.outputs.frontendUrl }}"
+          echo "ACR Name: ${{ steps.deploy.outputs.acrName }}"
