@@ -236,4 +236,222 @@ describe('AdminPage', () => {
         await user.click(deleteBookBtn);
         expect(adminService.deleteBook).toHaveBeenCalledWith(201);
     });
+
+    it('otevře modal pro přidání uživatele', async () => {
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat uživatele' }))
+
+        expect(screen.getByTestId('user-form-mock')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: 'Přidat uživatele' })).toBeInTheDocument()
+    })
+
+    it('přidá nového uživatele a zobrazí success toast', async () => {
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat uživatele' }))
+        await user.click(screen.getByText('Submit New'))
+
+        expect(adminService.createUser).toHaveBeenCalledWith({ userName: 'test' })
+        await waitFor(() => {
+            expect(toast.success).toHaveBeenCalledWith('Uživatel přidán')
+        })
+    })
+
+    it('zobrazí chybový toast při selhání přidání uživatele', async () => {
+        vi.spyOn(adminService, 'createUser').mockRejectedValueOnce(new Error('Error'))
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat uživatele' }))
+        await user.click(screen.getByText('Submit New'))
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Chyba při ukládání uživatele')
+        })
+    })
+
+    it('zavře modal po kliknutí na Cancel ve formuláři uživatele', async () => {
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat uživatele' }))
+        expect(screen.getByTestId('user-form-mock')).toBeInTheDocument()
+
+        await user.click(screen.getByText('Cancel'))
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('user-form-mock')).not.toBeInTheDocument()
+        })
+    })
+
+    it('otevře editační modal uživatele po kliknutí na řádek', async () => {
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByText('admin'))
+
+        await waitFor(() => {
+            expect(screen.getByRole('heading', { name: 'Upravit uživatele' })).toBeInTheDocument()
+            expect(screen.getByTestId('user-form-mock')).toBeInTheDocument()
+        })
+    })
+
+    it('zavře modal klávesou Escape', async () => {
+        renderComponent()
+        await waitFor(() => screen.getByText('admin'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat uživatele' }))
+        expect(screen.getByTestId('user-form-mock')).toBeInTheDocument()
+
+        await user.keyboard('{Escape}')
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('user-form-mock')).not.toBeInTheDocument()
+        })
+    })
+
+    it('otevře modal pro přidání knihy', async () => {
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Knihy' }))
+        await waitFor(() => screen.getByText('Kniha'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat knihu' }))
+
+        expect(screen.getByTestId('book-form-mock')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { name: 'Přidat knihu' })).toBeInTheDocument()
+    })
+
+    it('přidá novou knihu a zobrazí success toast', async () => {
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Knihy' }))
+        await waitFor(() => screen.getByText('Kniha'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat knihu' }))
+        await user.click(screen.getByText('Submit New'))
+
+        expect(adminService.createBook).toHaveBeenCalledWith({ title: 'Kniha' })
+        await waitFor(() => {
+            expect(toast.success).toHaveBeenCalledWith('Kniha přidána')
+        })
+    })
+
+    it('zobrazí chybový toast při selhání přidání knihy', async () => {
+        vi.spyOn(adminService, 'createBook').mockRejectedValueOnce(new Error('Error'))
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Knihy' }))
+        await waitFor(() => screen.getByText('Kniha'))
+
+        await user.click(screen.getByRole('button', { name: 'Přidat knihu' }))
+        await user.click(screen.getByText('Submit New'))
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Chyba při ukládání knihy')
+        })
+    })
+
+    it('otevře editační modal knihy po kliknutí na řádek', async () => {
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Knihy' }))
+        await waitFor(() => screen.getByText('Kniha'))
+
+        await user.click(screen.getByText('Kniha'))
+
+        await waitFor(() => {
+            expect(screen.getByRole('heading', { name: 'Upravit knihu' })).toBeInTheDocument()
+            expect(screen.getByTestId('book-form-mock')).toBeInTheDocument()
+        })
+    })
+
+    it('zobrazí chybový toast při selhání aktualizace statusu objednávky', async () => {
+        vi.spyOn(adminService, 'updateOrderStatus').mockRejectedValueOnce(new Error('Error'))
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Objednávky' }))
+
+        let selects: HTMLElement[] = []
+        await waitFor(() => {
+            selects = screen.getAllByRole('combobox')
+            expect(selects.length).toBeGreaterThan(0)
+        })
+
+        await user.selectOptions(selects[0], '2')
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Chyba při aktualizaci statusu')
+        })
+    })
+
+    it('zobrazí chybový toast při selhání načítání dat', async () => {
+        vi.spyOn(adminService, 'getOrders').mockRejectedValueOnce(new Error('Error'))
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Objednávky' }))
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Chyba při načítání dat')
+        })
+    })
+
+    it('zobrazí role uživatelů správně', async () => {
+        vi.spyOn(adminService, 'getUsers').mockResolvedValue([
+            { id: 1, userName: 'admin', name: 'Admin User', email: 'a@a.cz', role: 1 },
+            { id: 2, userName: 'normaluser', name: 'Regular User', email: 'u@u.cz', role: 0 },
+        ])
+        renderComponent()
+
+        await waitFor(() => {
+            expect(screen.getByText('Admin')).toBeInTheDocument()
+            expect(screen.getByText('User')).toBeInTheDocument()
+        })
+    })
+
+    it('zobrazí správně formátovanou cenu v tabulce objednávek', async () => {
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Objednávky' }))
+
+        await waitFor(() => {
+            expect(screen.getByText('500.00 Kč')).toBeInTheDocument()
+        })
+    })
+
+    it('zobrazí audit log detail s parsovanými JSON hodnotami', async () => {
+        vi.spyOn(adminService, 'getAuditLogs').mockResolvedValue([
+            {
+                id: 301,
+                userName: 'admin',
+                logType: 1,
+                createdDate: '2026-05-01T10:00:00Z',
+                original: '{"name":"Old"}',
+                updated: '{"name":"New"}',
+            }
+        ])
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Audit Log' }))
+
+        const table = await screen.findByRole('table')
+        const rows = within(table).getAllByRole('row')
+        await user.click(rows[1])
+
+        await waitFor(() => {
+            expect(screen.getByText(/Původní hodnoty/i)).toBeInTheDocument()
+            expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument()
+        })
+    })
+
+    it('zobrazí "Žádná data" v audit logu, pokud original a updated jsou prázdné', async () => {
+        vi.spyOn(adminService, 'getAuditLogs').mockResolvedValue([
+            { id: 302, userName: 'admin', logType: 1, createdDate: '2026-05-01T10:00:00Z' }
+        ])
+        renderComponent()
+        await user.click(screen.getByRole('button', { name: 'Audit Log' }))
+
+        const table = await screen.findByRole('table')
+        const rows = within(table).getAllByRole('row')
+        await user.click(rows[1])
+
+        await waitFor(() => {
+            expect(screen.getAllByText('Žádná data').length).toBeGreaterThanOrEqual(2)
+        })
+    })
 })
