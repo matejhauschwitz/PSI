@@ -63,7 +63,9 @@ jobs:
 
       - name: Upload to Azure Storage
         run: |
-          # Dynamické nalezení storage accountu
+          set -e
+          set -o pipefail
+
           ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared \
             --query "[?starts_with(name, 'stfrontend')].name | [0]" \
             -o tsv)
@@ -77,21 +79,29 @@ jobs:
           echo "Using storage: $ACCOUNT_NAME"
           echo "Key length: ${#ACCOUNT_KEY}"
 
+          echo "Waiting for storage..."
+          sleep 15
+
           az storage blob service-properties update \
             --account-name "$ACCOUNT_NAME" \
             --account-key "$ACCOUNT_KEY" \
+            --auth-mode key \
             --static-website \
             --index-document index.html \
             --404-document index.html
-          
-          # Nahrání souborů pomocí OIDC
+
           az storage blob upload-batch \
-            --account-name $ACCOUNT_NAME \
+            --account-name "$ACCOUNT_NAME" \
             --auth-mode login \
             --source ./dist \
             --destination '$web' \
             --overwrite
 
-          WEB_URL=$(az storage account show -n $ACCOUNT_NAME -g rg-bookstore-shared --query "primaryEndpoints.web" -o tsv)
-          echo "### Frontend nasazen! :rocket:" >> $GITHUB_STEP_SUMMARY
+          WEB_URL=$(az storage account show \
+            -n "$ACCOUNT_NAME" \
+            -g rg-bookstore-shared \
+            --query "primaryEndpoints.web" \
+            -o tsv)
+
+          echo "### Frontend nasazen! 🚀" >> $GITHUB_STEP_SUMMARY
           echo "Adresa: $WEB_URL" >> $GITHUB_STEP_SUMMARY
