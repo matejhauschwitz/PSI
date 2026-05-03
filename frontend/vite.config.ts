@@ -17,7 +17,7 @@ export default defineConfig({
     setupFiles: './src/test/setup.ts',
     coverage: {
       provider: 'v8', // Rychlejší než istanbul
-      reporter: ['text', 'json', 'html'], // 'html' vytvoří přehledný report ve složce /coverage
+      reporter: ['text', 'json', 'html', 'cobertura'], // 'html' vytvoří přehledný report ve složce /coverage
       include: ['src/**/*'],
       exclude: [
         'src/main.tsx',

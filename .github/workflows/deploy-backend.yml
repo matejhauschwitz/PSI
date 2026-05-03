@@ -13,6 +13,8 @@ on:
 permissions:
   id-token: write
   contents: read
+  actions: read
+  pull-requests: write
 
 jobs:
   build-and-deploy:
@@ -21,7 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- BACKEND ---
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -30,15 +31,19 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore api/api/SPI.csproj
 
-      - name: Run Tests
+      - name: Run Backend Tests
         run: dotnet test api.tests/api.tests.csproj --configuration Release --collect:"XPlat Code Coverage"
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Generate Backend Coverage Report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
-          name: test-results
-          path: '**/TestResults/*.xml'
+          reports: '**/TestResults/*/coverage.cobertura.xml'
+          targetdir: 'coveragereport'
+          reporttypes: 'MarkdownSummary'
+
+      - name: Add Backend Coverage to Summary
+        if: always()
+        run: cat coveragereport/Summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -51,7 +56,22 @@ jobs:
 
       - name: Run Frontend Tests
         working-directory: ./frontend
-        run: npx vitest run
+        run: npx vitest run --coverage
+
+      - name: Generate Frontend Coverage Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: always()
+        with:
+          filename: frontend/coverage/cobertura-coverage.xml
+          badge: true
+          format: markdown
+          output: both
+
+      - name: Add Frontend Coverage to Summary
+        if: always()
+        run: |
+          echo "### Frontend Test Metrics" >> $GITHUB_STEP_SUMMARY
+          cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
 
       - name: Azure Login
         uses: azure/login@v2
