@@ -1,11 +1,3 @@
-FROM node:20-alpine AS frontend-build
-WORKDIR /frontend-src
-
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npx vite build
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -26,6 +18,5 @@ EXPOSE 8080
 ENV ASPNETCORE_HTTP_PORTS=8080
 
 COPY --from=build /app/publish .
-COPY --from=frontend-build /frontend-src/dist ./wwwroot
 
 ENTRYPOINT ["dotnet", "SPI.dll"]

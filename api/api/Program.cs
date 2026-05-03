@@ -50,13 +50,28 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 var SPICors = "_SPICors";
 
+var allowedUrlsString = builder.Configuration["AllowedFrontendUrls"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         SPICors,
         policy =>
         {
-            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            if (string.IsNullOrWhiteSpace(allowedUrlsString))
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
+            else
+            {
+                var frontendUrls = allowedUrlsString.Split(',');
+                
+                policy.WithOrigins(frontendUrls)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            }
         }
     );
 });

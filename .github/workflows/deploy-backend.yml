@@ -2,7 +2,8 @@ name: Deploy Bookstore
 
 on:
   push:
-    branches: [ "main" ]
+    # ZMĚNA: Změň 'main' na testovací větev. Až to odladíš, vrátíš sem 'main'
+    branches: [ "feature/split-deploy" ] 
     paths:
       - 'api/**'         
       - 'EFModels/**'    
@@ -80,6 +81,7 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      # --- BACKEND NASAZENÍ ---
       - name: Log in to Azure Container Registry
         run: az acr login --name ${{ vars.ACR_NAME }}
 
@@ -100,3 +102,22 @@ jobs:
       - name: Restart App Service
         run: |
           az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared
+
+      # --- FRONTEND NASAZENÍ ---
+      - name: Get Static Web App Deployment Token
+        id: get-swa-token
+        run: |
+          SWA_TOKEN=$(az staticwebapp secrets list --name stapp-psi-frontend-shared --resource-group rg-bookstore-shared --query "properties.apiKey" -o tsv)
+          echo "SWA_TOKEN=$SWA_TOKEN" >> $GITHUB_ENV
+          echo "::add-mask::$SWA_TOKEN" # Skryje token v lozích
+
+      - name: Deploy Frontend to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        with:
+          azure_static_web_apps_api_token: ${{ env.SWA_TOKEN }}
+          action: "upload"
+          app_location: "./frontend"
+          output_location: "dist"
+          skip_api_build: true
