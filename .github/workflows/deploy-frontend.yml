@@ -67,7 +67,7 @@ jobs:
           set -o pipefail
 
           ACCOUNT_NAME=$(az storage account list -g rg-bookstore-shared \
-            --query "[?starts_with(name, 'stfrontend')].name | [0]" \
+            --query "[?contains(name, 'bookstore')].name | [0]" \
             -o tsv)
 
           ACCOUNT_KEY=$(az storage account keys list \
@@ -84,7 +84,7 @@ jobs:
 
           az storage blob upload-batch \
             --account-name "$ACCOUNT_NAME" \
-            --auth-mode login \
+            --account-key "$ACCOUNT_KEY" \
             --source ./dist \
             --destination '$web' \
             --overwrite
