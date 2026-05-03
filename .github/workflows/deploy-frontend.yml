@@ -82,14 +82,6 @@ jobs:
           echo "Waiting for storage..."
           sleep 15
 
-          az storage blob service-properties update \
-            --account-name "$ACCOUNT_NAME" \
-            --account-key "$ACCOUNT_KEY" \
-            --auth-mode key \
-            --static-website \
-            --index-document index.html \
-            --404-document index.html
-
           az storage blob upload-batch \
             --account-name "$ACCOUNT_NAME" \
             --auth-mode login \
