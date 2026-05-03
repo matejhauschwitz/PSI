@@ -46,7 +46,7 @@ export default function BookDetailPage() {
       <CommentsSection
         bookId={book.id}
         comments={comments}
-        onAddComment={addComment}
+        onAddComment={async (comment) => { await addComment(comment); }}
         isAuthenticated={isAuthenticated}
       />
     </div>

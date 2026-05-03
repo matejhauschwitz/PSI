@@ -24,7 +24,7 @@ describe('BooksGrid', () => {
         totalRecords: 20,
         totalPages: 5,
         page: 1,
-        limit: 4
+        pageSize: 4
     }
 
     const renderWithRouter = (ui: React.ReactElement) => {

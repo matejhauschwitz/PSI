@@ -8,13 +8,13 @@ describe('BookForm', () => {
   const mockSubmit = vi.fn()
   const mockCancel = vi.fn()
 
-  const defaultBook: AdminBook = {
+  const defaultBook = {
     title: 'Test Title',
     authors: 'Test Author',
     price: 100,
-    isbn10: '1234567890',
-    isbn13: '1234567890123'
-  }
+    isbN10: '1234567890',
+    isbN13: '1234567890123'
+  } as AdminBook;
 
   it('vykreslí formulář s prázdnými poli, pokud není předána kniha', () => {
     const { container } = render(<BookForm onSubmit={mockSubmit} onCancel={mockCancel} />)
