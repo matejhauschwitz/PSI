@@ -53,7 +53,8 @@ describe('UserForm', () => {
       userName: '',
       name: 'Nové Jméno',
       email: '',
-      role: 1
+      role: 1,
+      password: ''
     })
   })
 
