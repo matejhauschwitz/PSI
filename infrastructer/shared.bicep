@@ -77,14 +77,16 @@ module backendApp './modules/webapp.bicep' = {
   }
 }
 
-resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = {
-  name: 'stapp-psi-frontend-shared'
+resource frontendStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: 'stfrontend${uniqueString(resourceGroup().id)}' 
   location: location
   sku: {
-    name: 'Free'
-    tier: 'Free'
+    name: 'Standard_LRS'
   }
-  properties: {}
+  kind: 'StorageV2'
+  properties: {
+    allowBlobPublicAccess: true
+  }
 }
 
 output acrName string = acr.outputs.acrName
