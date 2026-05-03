@@ -399,7 +399,9 @@ FodyWeavers.xsd
 
 # Výsledky testů a reporty pokrytí
 TestResults/
+# Ignoruje všechny složky s reporty bez ohledu na to, kde jsou
 coveragereport/
+frontend/coverage/
 *.cobertura.xml
 
 # Dočasné soubory IDE (Visual Studio / VS Code)
