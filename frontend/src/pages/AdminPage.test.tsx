@@ -216,32 +216,6 @@ describe('AdminPage', () => {
         expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument();
     });
 
-    it('otevře detail audit logu a zobrazí zformátovaný JSON', async () => {
-        renderComponent();
-
-        await waitFor(() => {
-            expect(screen.queryByText(/Načítám/i)).not.toBeInTheDocument();
-        });
-
-        const auditTab = screen.getByRole('button', { name: /Audit Log/i });
-        await user.click(auditTab);
-
-        const logCell = await screen.findByRole('cell', { name: 'admin' });
-        await user.click(logCell);
-
-        const modalTitle = await screen.findByText(/Detail auditu č. 301/i);
-        expect(modalTitle).toBeInTheDocument();
-
-        expect(screen.getByText(/Původní hodnoty/i)).toBeInTheDocument();
-        expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument();
-
-        const preElements = screen.getAllByText((content, element) => {
-            return element?.tagName.toLowerCase() === 'pre' && content.includes('"');
-        });
-        
-        expect(preElements.length).toBeGreaterThan(0);
-    });
-
     it('smaže objednávku a knihu po potvrzení', async () => {
         renderComponent();
 
