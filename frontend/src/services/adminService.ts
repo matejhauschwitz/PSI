@@ -6,6 +6,7 @@ export interface AdminUser {
   name?: string
   email?: string
   role?: number
+  password?: string;
 }
 
 export interface AdminOrder {

@@ -107,6 +107,7 @@ public class AdminController : ControllerBase
         {
             bool success = _userService.UpdateUserById(
                 id,
+                userDto.Name,
                 userDto.Address, 
                 userDto.BillingAddress, 
                 userDto.ProcessData, 
@@ -114,7 +115,8 @@ public class AdminController : ControllerBase
                 userDto.BirthDay, 
                 userDto.FavouriteGerners, 
                 userDto.Referral, 
-                userDto.Email);
+                userDto.Email,
+                userDto.Role);
             
             return success ? Ok("User updated successfully") : BadRequest("Unable to update user");
         }

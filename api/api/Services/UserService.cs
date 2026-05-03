@@ -38,49 +38,58 @@ public class UserService : IUserService
         return Convert.ToBase64String(salt) + ":" + hash;
     }
 
-    public bool UpdateUser(string userName, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
+    public bool UpdateUser(string userName, string name, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email, int role = 0)
     {
-        var user = _ctx.Users.AsQueryable().Include(x => x.BillingAddress).Include(x => x.Address).SingleOrDefault(x => x.UserName == userName);
+        var user = _ctx.Users.AsQueryable()
+            .Include(x => x.BillingAddress)
+            .Include(x => x.Address)
+            .SingleOrDefault(x => x.UserName == userName);
+            
         if (user == null) return false;
-        return ApplyUserUpdate(user, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email);
+        
+        return ApplyUserUpdate(user, name, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email, role);
     }
 
-    public bool UpdateUserById(int id, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
+    public bool UpdateUserById(int id, string name, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email, int role = 0)
     {
         var user = _ctx.Users.AsQueryable().Include(x => x.BillingAddress).Include(x => x.Address).SingleOrDefault(x => x.Id == id);
         if (user == null) return false;
-        return ApplyUserUpdate(user, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email);
+
+        return ApplyUserUpdate(user, name, address, billingAddress, processData, isMale, birthDay, FavouriteGerners, referral, email, role);
     }
 
-    private bool ApplyUserUpdate(User user, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email)
+    private bool ApplyUserUpdate(User user, string name, AddressDto? address, AddressDto? billingAddress, bool? processData, bool? isMale, DateTime? birthDay, List<string> FavouriteGerners, string? referral, string? email, int role = 0)
     {
         var oldUser = _mapper.Map<UserDetailDto>(user);
+        
+        user.Name = name;
+        user.Role = (UserRole)role;
+        
         user.Address = _mapper.Map<Address>(address);
         user.BillingAddress = _mapper.Map<Address>(billingAddress);
         user.ProcessData = processData;
         user.IsMale = isMale;
+        
         if (birthDay is not null)
         {
             if (birthDay > DateTime.Today) return false;
         }
         user.BirthDay = birthDay;
+        
         List<Genre> genres = new List<Genre>();
         foreach (var genre in FavouriteGerners)
         {
-
             Genre dbGenre = _ctx.Genres.SingleOrDefault(x => x.Name == genre);
             if (dbGenre is null)
             {
-                dbGenre = new Genre()
-                {
-                    Name = genre
-                };
+                dbGenre = new Genre() { Name = genre };
             }
             genres.Add(dbGenre);
         }
         user.FavouriteGerners = genres;
         user.Referral = referral;
         user.Email = email;
+        
         _ctx.SaveChanges();
 
         _auditService.LogAudit(oldUser, _mapper.Map<UserDetailDto>(user), LogType.UpdateUserDetail, user.UserName);
@@ -124,29 +133,27 @@ public class UserService : IUserService
         }
     }
 
-    public bool CreateUser(string userName, string password, string name, string? email)
+    public bool CreateUser(string userName, string password, string name, string? email, int role = 0)
     {
-        try
+        var existingUser = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
+        if (existingUser is not null) 
         {
-            var existingUser = _ctx.Users.FirstOrDefault(x => x.UserName == userName);
-            if (existingUser is not null) return false;
-
-            var newUser = new User
-            {
-                UserName = userName,
-                PasswordHash = CreatePasswordHash(password),
-                Name = name,
-                Email = email,
-                Role = UserRole.User
-            };
-
-            _ctx.Users.Add(newUser);
-            _ctx.SaveChanges();
-            return true;
+            return false; 
         }
-        catch (Exception ex)
+
+        var newUser = new User
         {
-            return false;
-        }
+            UserName = userName,
+            PasswordHash = CreatePasswordHash(password),
+            Name = string.IsNullOrEmpty(name) ? userName : name,
+            Email = email,
+            Role = (UserRole)role
+        };
+
+        _ctx.Users.Add(newUser);
+        
+        _ctx.SaveChanges(); 
+        
+        return true;
     }
 }

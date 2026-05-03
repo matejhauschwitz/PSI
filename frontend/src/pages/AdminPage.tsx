@@ -9,6 +9,8 @@ import BookForm from '../components/BookForm'
 
 export default function AdminPage() {
   const navigate = useNavigate()
+  
+  // Stavy
   const [activeTab, setActiveTab] = useState<'users' | 'orders' | 'books' | 'auditlogs'>('users')
   const [users, setUsers] = useState<AdminUser[]>([])
   const [orders, setOrders] = useState<AdminOrder[]>([])
@@ -16,6 +18,8 @@ export default function AdminPage() {
   const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([])
   const [loading, setLoading] = useState(false)
   const [filters, setFilters] = useState({ logType: '', userName: '', startDate: '', endDate: '' })
+  
+  // Stavy modalu
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add')
   const [modalEntity, setModalEntity] = useState<'user' | 'book' | null>(null)
@@ -110,6 +114,64 @@ export default function AdminPage() {
     }
   }
 
+  // --- Handlery Modalu ---
+
+  const openUserModal = (user?: AdminUser) => {
+    setModalEntity('user')
+    setModalMode(user ? 'edit' : 'add')
+    setEditUser(user || null)
+    setModalOpen(true)
+  }
+
+  const openBookModal = (book?: AdminBook) => {
+    setModalEntity('book')
+    setModalMode(book ? 'edit' : 'add')
+    setEditBook(book || null)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+    setEditUser(null)
+    setEditBook(null)
+    setModalEntity(null)
+  }
+
+  const handleUserFormSubmit = async (user: AdminUser) => {
+    try {
+      if (modalMode === 'add') {
+        await adminService.createUser(user)
+        toast.success('Uživatel přidán')
+      } else if (modalMode === 'edit' && user.id) {
+        console.log('Updating user:', user) // Debug log
+        await adminService.updateUser(user.id, user)
+        toast.success('Uživatel upraven')
+      }
+      closeModal()
+      loadData()
+    } catch (e) {
+      toast.error('Chyba při ukládání uživatele')
+    }
+  }
+
+  const handleBookFormSubmit = async (book: AdminBook) => {
+    try {
+      if (modalMode === 'add') {
+        await adminService.createBook(book)
+        toast.success('Kniha přidána')
+      } else if (modalMode === 'edit' && book.id) {
+        await adminService.updateBook(book.id, book)
+        toast.success('Kniha upravena')
+      }
+      closeModal()
+      loadData()
+    } catch (e) {
+      toast.error('Chyba při ukládání knihy')
+    }
+  }
+
+  // --- Renderovací funkce pro tabulky ---
+
   const renderUsersTable = () => (
     <div className="overflow-x-auto">
       <div className="flex justify-end mb-2">
@@ -196,15 +258,6 @@ export default function AdminPage() {
           ))}
         </tbody>
       </table>
-      {/* Modal pro uživatele a knihy */}
-      <Modal open={modalOpen} onClose={closeModal} title={modalEntity === 'user' ? (modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele') : (modalMode === 'add' ? 'Přidat knihu' : 'Upravit knihu')}>
-        {modalEntity === 'user' && (
-          <UserForm user={editUser || undefined} onSubmit={handleUserFormSubmit} onCancel={closeModal} />
-        )}
-        {modalEntity === 'book' && (
-          <BookForm book={editBook || undefined} onSubmit={handleBookFormSubmit} onCancel={closeModal} />
-        )}
-      </Modal>
     </div>
   )
 
@@ -306,72 +359,18 @@ export default function AdminPage() {
     </div>
   )
 
-  // Otevření modalu pro přidání/úpravu uživatele
-  const openUserModal = (user?: AdminUser) => {
-    setModalEntity('user')
-    setModalMode(user ? 'edit' : 'add')
-    setEditUser(user || null)
-    setModalOpen(true)
-  }
-
-  // Otevření modalu pro přidání/úpravu knihy
-  const openBookModal = (book?: AdminBook) => {
-    setModalEntity('book')
-    setModalMode(book ? 'edit' : 'add')
-    setEditBook(book || null)
-    setModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setModalOpen(false)
-    setEditUser(null)
-    setEditBook(null)
-    setModalEntity(null)
-  }
-
-  // Odeslání formuláře uživatele
-  const handleUserFormSubmit = async (user: AdminUser) => {
-    try {
-      if (modalMode === 'add') {
-        await adminService.createUser(user)
-        toast.success('Uživatel přidán')
-      } else if (modalMode === 'edit' && user.id) {
-        await adminService.updateUser(user.id, user)
-        toast.success('Uživatel upraven')
-      }
-      closeModal()
-      loadData()
-    } catch (e) {
-      toast.error('Chyba při ukládání uživatele')
+  // Pomocná funkce pro určení titulku modalu
+  const getModalTitle = () => {
+    if (modalEntity === 'user') {
+      return modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele'
     }
-  }
-
-  // Odeslání formuláře knihy
-  const handleBookFormSubmit = async (book: AdminBook) => {
-    try {
-      if (modalMode === 'add') {
-        await adminService.createBook(book)
-        toast.success('Kniha přidána')
-      } else if (modalMode === 'edit' && book.id) {
-        await adminService.updateBook(book.id, book)
-        toast.success('Kniha upravena')
-      }
-      closeModal()
-      loadData()
-    } catch (e) {
-      toast.error('Chyba při ukládání knihy')
+    if (modalEntity === 'book') {
+      return modalMode === 'add' ? 'Přidat knihu' : 'Upravit knihu'
     }
+    return ''
   }
 
-  {/* Modal pro uživatele a knihy */}
-  <Modal open={modalOpen} onClose={closeModal} title={modalEntity === 'user' ? (modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele') : (modalMode === 'add' ? 'Přidat knihu' : 'Upravit knihu')}>
-    {modalEntity === 'user' && (
-      <UserForm user={editUser || undefined} onSubmit={handleUserFormSubmit} onCancel={closeModal} />
-    )}
-    {modalEntity === 'book' && (
-      <BookForm book={editBook || undefined} onSubmit={handleBookFormSubmit} onCancel={closeModal} />
-    )}
-  </Modal>
+  // --- Hlavní Render ---
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -410,33 +409,28 @@ export default function AdminPage() {
           )}
         </div>
 
+        {/* --- JEDEN UNIVERZÁLNÍ MODAL --- */}
         <Modal
           open={modalOpen}
           onClose={closeModal}
-          title={modalMode === 'add' ? 'Přidat uživatele' : 'Upravit uživatele'}
+          title={getModalTitle()}
         >
-          {modalMode === 'add' ? (
-            <div>
-              <input type="text" placeholder="Username" className="border rounded px-3 py-2" />
-              <input type="text" placeholder="Jméno" className="border rounded px-3 py-2" />
-              <input type="email" placeholder="Email" className="border rounded px-3 py-2" />
-              <select className="border rounded px-3 py-2">
-                <option value={1}>Admin</option>
-                <option value={0}>User</option>
-              </select>
-            </div>
-          ) : (
-            <div>
-              <input type="text" placeholder="Username" className="border rounded px-3 py-2" value={editUser?.userName} />
-              <input type="text" placeholder="Jméno" className="border rounded px-3 py-2" value={editUser?.name} />
-              <input type="email" placeholder="Email" className="border rounded px-3 py-2" value={editUser?.email} />
-              <select className="border rounded px-3 py-2">
-                <option value={1}>Admin</option>
-                <option value={0}>User</option>
-              </select>
-            </div>
+          {modalEntity === 'user' && (
+            <UserForm 
+              user={editUser || undefined} 
+              onSubmit={handleUserFormSubmit} 
+              onCancel={closeModal} 
+            />
+          )}
+          {modalEntity === 'book' && (
+            <BookForm 
+              book={editBook || undefined} 
+              onSubmit={handleBookFormSubmit} 
+              onCancel={closeModal} 
+            />
           )}
         </Modal>
+
       </div>
     </div>
   )

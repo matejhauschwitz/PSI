@@ -8,7 +8,7 @@ interface UserFormProps {
 }
 
 export default function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
-  const [form, setForm] = useState<AdminUser>(user || { userName: '', name: '', email: '', role: 0 })
+  const [form, setForm] = useState<AdminUser>(user || { userName: '', name: '', email: '', role: 0, password: '' })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -34,6 +34,21 @@ export default function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
         <label className="block mb-1">Email</label>
         <input name="email" type="email" value={form.email || ''} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
       </div>
+      
+      {!user?.id && (
+        <div>
+          <label className="block mb-1">Heslo</label>
+          <input 
+            name="password" 
+            type="password" 
+            value={form.password || ''} 
+            onChange={handleChange} 
+            required 
+            className="border rounded px-3 py-2 w-full" 
+          />
+        </div>
+      )}
+
       <div>
         <label className="block mb-1">Role</label>
         <select name="role" value={form.role || 0} onChange={handleChange} className="border rounded px-3 py-2 w-full">

@@ -21,5 +21,5 @@ public class UserDetailDto
     public DateTime? BirthDay { get; set; }
     public List<string> FavouriteGerners { get; set; } = [];
     public string? Referral { get; set; }
-    public int? Role { get; set; }
+    public int Role { get; set; }
 }
