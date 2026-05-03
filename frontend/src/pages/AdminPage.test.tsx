@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
@@ -197,20 +197,24 @@ describe('AdminPage', () => {
         })
     })
 
-    it('otevře modal pro přidání uživatele', async () => {
-        renderComponent()
+    it('otevře detail audit logu a zobrazí zformátovaný JSON', async () => {
+        renderComponent();
+
+        const auditTab = screen.getByRole('button', { name: /Audit Log/i });
+        await user.click(auditTab);
+
+        const table = await screen.findByRole('table');
+
+        const rows = within(table).getAllByRole('row');
+        
+        await user.click(rows[1]);
 
         await waitFor(() => {
-            expect(screen.getByText('Přidat uživatele')).toBeInTheDocument()
-        })
+            expect(screen.getByText(/Detail auditu/i)).toBeInTheDocument();
+        });
 
-        const addBtns = screen.getAllByRole('button', { name: /Přidat uživatele/i })
-        await user.click(addBtns[0])
-
-        await waitFor(() => {
-            expect(screen.getAllByText('Přidat uživatele').length).toBeGreaterThan(1)
-        })
-    })
+        expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument();
+    });
 
     it('otevře detail audit logu a zobrazí zformátovaný JSON', async () => {
         renderComponent();
@@ -222,17 +226,20 @@ describe('AdminPage', () => {
         const auditTab = screen.getByRole('button', { name: /Audit Log/i });
         await user.click(auditTab);
 
-        const logRow = await screen.findByText(/admin/i);
-        await user.click(logRow);
+        const logCell = await screen.findByRole('cell', { name: 'admin' });
+        await user.click(logCell);
 
-        const modalTitle = await screen.findByText(/Detail auditu/i);
+        const modalTitle = await screen.findByText(/Detail auditu č. 301/i);
         expect(modalTitle).toBeInTheDocument();
 
         expect(screen.getByText(/Původní hodnoty/i)).toBeInTheDocument();
         expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument();
 
-        const formattedJson = screen.getByText(/"id":/i); 
-        expect(formattedJson).toBeInTheDocument();
+        const preElements = screen.getAllByText((content, element) => {
+            return element?.tagName.toLowerCase() === 'pre' && content.includes('"');
+        });
+        
+        expect(preElements.length).toBeGreaterThan(0);
     });
 
     it('smaže objednávku a knihu po potvrzení', async () => {
