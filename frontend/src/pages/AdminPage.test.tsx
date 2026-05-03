@@ -219,11 +219,20 @@ describe('AdminPage', () => {
             expect(screen.queryByText(/Načítám/i)).not.toBeInTheDocument();
         });
 
-        const auditTab = screen.getByText('Audit Log');
+        const auditTab = screen.getByRole('button', { name: /Audit Log/i });
         await user.click(auditTab);
 
-        const logRow = await screen.findByText('test-admin');
+        const logRow = await screen.findByText(/admin/i);
         await user.click(logRow);
+
+        const modalTitle = await screen.findByText(/Detail auditu/i);
+        expect(modalTitle).toBeInTheDocument();
+
+        expect(screen.getByText(/Původní hodnoty/i)).toBeInTheDocument();
+        expect(screen.getByText(/Nové hodnoty/i)).toBeInTheDocument();
+
+        const formattedJson = screen.getByText(/"id":/i); 
+        expect(formattedJson).toBeInTheDocument();
     });
 
     it('smaže objednávku a knihu po potvrzení', async () => {
