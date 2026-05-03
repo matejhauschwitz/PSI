@@ -20,12 +20,16 @@ export interface AdminOrder {
 
 export interface AdminBook {
   id?: number
-  title?: string
-  authors?: string
-  price?: number
-  isbn10?: string
-  isbn13?: string
-  isHidden?: boolean
+  title: string
+  authors: string
+  subtitle: string
+  genre: string
+  description: string
+  price: number
+  isbN10?: string
+  isbN13?: string
+  coverImageUrl: string
+  comments?: any[]
 }
 
 export interface AdminAuditLog {

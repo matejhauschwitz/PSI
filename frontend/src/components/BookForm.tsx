@@ -8,11 +8,25 @@ interface BookFormProps {
 }
 
 export default function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
-  const [form, setForm] = useState<AdminBook>(book || { title: '', authors: '', price: 0, isbn10: '', isbn13: '' })
+  const [form, setForm] = useState<AdminBook>(book || { 
+    title: '', 
+    subtitle: '',
+    authors: '', 
+    genre: '',
+    description: '',
+    isbn10: '', 
+    isbn13: '',
+    coverImageUrl: '',
+    price: 0,
+    comments: []
+  })
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setForm(f => ({ ...f, [name]: name === 'price' ? Number(value) : value }))
+    setForm(f => ({ 
+      ...f, 
+      [name]: name === 'price' ? Number(value) : value 
+    }))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,30 +35,59 @@ export default function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block mb-1">Název</label>
-        <input name="title" value={form.title || ''} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto p-4">
+      <div className="grid grid-cols-1 gap-4">
+        <div>
+          <label className="block mb-1 font-medium">Název</label>
+          <input name="title" value={form.title} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Podtitul</label>
+          <input name="subtitle" value={form.subtitle} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-1 font-medium">Autor</label>
+            <input name="authors" value={form.authors} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Žánr</label>
+            <input name="genre" value={form.genre} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Popis</label>
+          <textarea name="description" value={form.description} onChange={handleChange} required className="border rounded px-3 py-2 w-full h-24" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-1 font-medium">ISBN10</label>
+            <input name="isbn10" value={form.isbn10 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">ISBN13</label>
+            <input name="isbn13" value={form.isbn13 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">URL obálky</label>
+          <input name="coverImageUrl" type="url" value={form.coverImageUrl} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Cena (Kč)</label>
+          <input name="price" type="number" min="0" value={form.price} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
+        </div>
       </div>
-      <div>
-        <label className="block mb-1">Autor</label>
-        <input name="authors" value={form.authors || ''} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
-      </div>
-      <div>
-        <label className="block mb-1">Cena</label>
-        <input name="price" type="number" min="0" step="0.01" value={form.price || 0} onChange={handleChange} required className="border rounded px-3 py-2 w-full" />
-      </div>
-      <div>
-        <label className="block mb-1">ISBN10</label>
-        <input name="isbn10" value={form.isbn10 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
-      </div>
-      <div>
-        <label className="block mb-1">ISBN13</label>
-        <input name="isbn13" value={form.isbn13 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
-      </div>
-      <div className="flex gap-2 justify-end">
+
+      <div className="flex gap-2 justify-end pt-4 border-t">
         <button type="button" onClick={onCancel} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Zrušit</button>
-        <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Uložit</button>
+        <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Uložit knihu</button>
       </div>
     </form>
   )

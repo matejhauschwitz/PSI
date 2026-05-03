@@ -143,7 +143,6 @@ export default function AdminPage() {
         await adminService.createUser(user)
         toast.success('Uživatel přidán')
       } else if (modalMode === 'edit' && user.id) {
-        console.log('Updating user:', user) // Debug log
         await adminService.updateUser(user.id, user)
         toast.success('Uživatel upraven')
       }
@@ -157,9 +156,11 @@ export default function AdminPage() {
   const handleBookFormSubmit = async (book: AdminBook) => {
     try {
       if (modalMode === 'add') {
+        console.log('Created book:', book)
         await adminService.createBook(book)
         toast.success('Kniha přidána')
       } else if (modalMode === 'edit' && book.id) {
+        console.log('Updating book with ID:', book.id, 'Data:', book)
         await adminService.updateBook(book.id, book)
         toast.success('Kniha upravena')
       }
@@ -287,7 +288,7 @@ export default function AdminPage() {
               <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.title}</td>
               <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.authors}</td>
               <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.price?.toFixed(2)} Kč</td>
-              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.isbn13 || book.isbn10}</td>
+              <td className="px-4 py-2 cursor-pointer" onClick={() => openBookModal(book)}>{book.isbN13 || book.isbN10}</td>
               <td className="px-4 py-2 text-center">
                 <button
                   onClick={() => handleDelete('books', book.id)}
