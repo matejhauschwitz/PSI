@@ -14,8 +14,8 @@ export default function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
     authors: '', 
     genre: '',
     description: '',
-    isbn10: '', 
-    isbn13: '',
+    isbN10: '', 
+    isbN13: '',
     coverImageUrl: '',
     price: 0,
     comments: []
@@ -66,11 +66,11 @@ export default function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block mb-1 font-medium">ISBN10</label>
-            <input name="isbn10" value={form.isbn10 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
+            <input name="isbN10" value={form.isbN10 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
           </div>
           <div>
             <label className="block mb-1 font-medium">ISBN13</label>
-            <input name="isbn13" value={form.isbn13 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
+            <input name="isbN13" value={form.isbN13 || ''} onChange={handleChange} className="border rounded px-3 py-2 w-full" />
           </div>
         </div>
 
