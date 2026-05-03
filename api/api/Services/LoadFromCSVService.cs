@@ -13,7 +13,7 @@ namespace SPI.Services;
 /// <summary>
 /// Statická třída poskytující službu pro načítání dat knih z CSV souboru.
 /// </summary>
-public class LoadFromCsvService
+public class LoadFromCsvService : ILoadFromCsvService
 {
     private readonly DatabaseContext _ctx;
     private readonly IAuditService _auditService;

@@ -11,7 +11,7 @@ namespace SPI.Services;
 /// <summary>
 /// Statická třída poskytující službu pro načítání dat knih z JSON řetězce.
 /// </summary>
-public class LoadFromCdbService
+public class LoadFromCdbService : ILoadFromCdbService
 {
     private readonly DatabaseContext _ctx;
     private readonly IMapper _mapper;
