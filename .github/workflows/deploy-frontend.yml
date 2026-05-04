@@ -100,10 +100,17 @@ jobs:
         id: lighthouse_audit
         with:
           urls: ${{ needs.deploy-frontend.outputs.WEB_URL }}
-          uploadArtifacts: true
+          uploadArtifacts: false 
           temporaryPublicStorage: true
 
+      - name: Upload Lighthouse Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci/
+
       - name: Format Lighthouse Score
+        if: success() || failure()
         run: |
           # Načtení výsledků z Lighthouse akce
           RESULTS_JSON='${{ steps.lighthouse_audit.outputs.manifest }}'
