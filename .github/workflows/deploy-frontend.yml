@@ -112,22 +112,30 @@ jobs:
       - name: Format Lighthouse Score
         if: success() || failure()
         run: |
-          # Načtení výsledků z Lighthouse akce
           RESULTS_JSON='${{ steps.lighthouse_audit.outputs.manifest }}'
-          # Lighthouse vrací pole výsledků (pro každou URL jeden), vezmeme ten první
-          SCORE_PERF=$(echo $RESULTS_JSON | jq -r '.[0].summary.performance * 100 | floor')
-          SCORE_ACC=$(echo $RESULTS_JSON | jq -r '.[0].summary.accessibility * 100 | floor')
-          SCORE_BP=$(echo $RESULTS_JSON | jq -r '.[0].summary."best-practices" * 100 | floor')
-          SCORE_SEO=$(echo $RESULTS_JSON | jq -r '.[0].summary.seo * 100 | floor')
-          REPORT_URL='${{ steps.lighthouse_audit.outputs.links }}'
-          REPORT_URL=$(echo $REPORT_URL | jq -r '.[0]')
+          
+          if [ "$RESULTS_JSON" != "" ] && [ "$RESULTS_JSON" != "null" ]; then
+            
+            EXTRACT_SCORE() {
+              echo $RESULTS_JSON | jq -r "if type==\"array\" then .[0].summary.$1 else .summary.$1 end | . * 100 | floor"
+            }
 
-          echo "### ⚡ Lighthouse Audit Výsledky" >> $GITHUB_STEP_SUMMARY
-          echo "| Kategorie | Skóre |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🚀 Performance | $SCORE_PERF |" >> $GITHUB_STEP_SUMMARY
-          echo "| ♿ Accessibility | $SCORE_ACC |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🛡️ Best Practices | $SCORE_BP |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔍 SEO | $SCORE_SEO |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "[Zobrazit kompletní report]($REPORT_URL)" >> $GITHUB_STEP_SUMMARY
+            SCORE_PERF=$(EXTRACT_SCORE "performance")
+            SCORE_ACC=$(EXTRACT_SCORE "accessibility")
+            SCORE_BP=$(EXTRACT_SCORE "best-practices")
+            SCORE_SEO=$(EXTRACT_SCORE "seo")
+            
+            REPORT_URL=$(echo '${{ steps.lighthouse_audit.outputs.links }}' | jq -r 'if type=="array" then .[0] else . end')
+
+            echo "### ⚡ Lighthouse Audit Výsledky" >> $GITHUB_STEP_SUMMARY
+            echo "| Kategorie | Skóre |" >> $GITHUB_STEP_SUMMARY
+            echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚀 Performance | $SCORE_PERF |" >> $GITHUB_STEP_SUMMARY
+            echo "| ♿ Accessibility | $SCORE_ACC |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🛡️ Best Practices | $SCORE_BP |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🔍 SEO | $SCORE_SEO |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "[Zobrazit kompletní report]($REPORT_URL)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚠️ Lighthouse report nebyl vygenerován" >> $GITHUB_STEP_SUMMARY
+          fi
