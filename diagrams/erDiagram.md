@@ -1,15 +1,17 @@
 ```mermaid
 classDiagram
-    class User {
+    class Users {
         +int Id PK
-        +string Name
         +string UserName
-        +string Email
         +string PasswordHash
-        +string Role
-        +DateTime BirthDay
+        +string Name
+        +bool IsMale
+        +bool ProcessData
+        +string Referral
         +int AddressId FK
         +int BillingAddressId FK
+        +DateTime BirthDay
+        +string Email
     }
 
     class Address {
@@ -20,72 +22,89 @@ classDiagram
         +string Country
     }
 
-    class Book {
+    class Books {
         +int Id PK
+        +string ISBN10
+        +string ISBN13
         +string Title
+        +string Subtitle
         +string Authors
+        +string Genre
+        +string CoverImageUrl
+        +string Description
         +int PublicationYear
         +double Rating
-        +double Price
+        +int PageCount
+        +int TotalRatings
         +bool IsHidden
+        +double Price
+        +DateTime LastUpdated
     }
 
-    class Comment {
+    class Comments {
         +int Id PK
         +string Content
         +DateTime CreatedDate
-        +int Rating
         +int BookId FK
         +int UserId FK
+        +double Rating
     }
 
-    class Genre {
+    class Genres {
         +int Id PK
         +string Name
+        +int UserId FK
+        +int BookId FK
     }
 
-    class Order {
+    class Orders {
         +int Id PK
         +DateTime Created
-        +double TotalPrice
-        +string UserSnapshot
         +int UserId FK
+        +double TotalPrice
+        +int PaymentMethod
+        +string UserSnapshot
+        +int Status
     }
 
-    %% JOIN TABLES (důležité pro DB!)
+    class AuditLogs {
+        +int Id PK
+        +string Original
+        +string Updated
+        +DateTime CreatedDate
+        +string UserName
+        +int LogType
+    }
+
+    class EFMigrationsHistory {
+        +string MigrationId PK
+        +string ProductVersion
+    }
+
+    class BookOrder {
+        +int BooksId FK
+        +int OrdersId FK
+    }
 
     class UserFavouriteBooks {
-        +int UserId FK
-        +int BookId FK
+        +int FavouriteBooksId FK
+        +int UsersId FK
     }
 
-    class BookGenres {
-        +int BookId FK
-        +int GenreId FK
-    }
+    Users "1" --> "0..*" Comments : UserId
+    Books "1" --> "0..*" Comments : BookId
 
-    class OrderBooks {
-        +int OrderId FK
-        +int BookId FK
-    }
+    Users "1" --> "0..*" Orders : UserId
 
-    %% Relationships (relační pohled)
+    Users "0..1" --> "1" Address : AddressId
+    Users "0..1" --> "1" Address : BillingAddressId
 
-    User "1" --> "0..*" Comment : UserId
-    Book "1" --> "0..*" Comment : BookId
+    Users "1" --> "0..*" Genres : UserId
+    Books "1" --> "0..*" Genres : BookId
 
-    User "1" --> "0..*" Order : UserId
+    Books "1" --> "0..*" BookOrder : BooksId
+    Orders "1" --> "0..*" BookOrder : OrdersId
 
-    User "1" --> "0..1" Address : AddressId
-    User "1" --> "0..1" Address : BillingAddressId
-
-    %% M:N přes join tabulky
-    User "1" --> "0..*" UserFavouriteBooks
-    Book "1" --> "0..*" UserFavouriteBooks
-
-    Book "1" --> "0..*" BookGenres
-    Genre "1" --> "0..*" BookGenres
-
-    Order "1" --> "0..*" OrderBooks
-    Book "1" --> "0..*" OrderBooks
+    Users "1" --> "0..*" UserFavouriteBooks : UsersId
+    Books "1" --> "0..*" UserFavouriteBooks : FavouriteBooksId
 ```
