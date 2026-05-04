@@ -5,13 +5,14 @@ classDiagram
         +string UserName
         +string PasswordHash
         +string Name
-        +bool IsMale
-        +bool ProcessData
-        +string Referral
-        +int AddressId FK
-        +int BillingAddressId FK
-        +DateTime BirthDay
-        +string Email
+        +bool? IsMale
+        +bool? ProcessData
+        +string? Referral
+        +int? AddressId FK
+        +int? BillingAddressId FK
+        +DateTime? BirthDay
+        +string? Email
+        +int Role
     }
 
     class Address {
@@ -37,7 +38,7 @@ classDiagram
         +int PageCount
         +int TotalRatings
         +bool IsHidden
-        +double Price
+        +double? Price
         +DateTime LastUpdated
     }
 
@@ -53,18 +54,18 @@ classDiagram
     class Genres {
         +int Id PK
         +string Name
-        +int UserId FK
-        +int BookId FK
+        +int? UserId FK
+        +int? BookId FK
     }
 
     class Orders {
         +int Id PK
         +DateTime Created
         +int UserId FK
-        +double TotalPrice
-        +int PaymentMethod
+        +double totalPrice
+        +int? PaymentMethod
         +string UserSnapshot
-        +int Status
+        +int? Status
     }
 
     class AuditLogs {
@@ -72,7 +73,7 @@ classDiagram
         +string Original
         +string Updated
         +DateTime CreatedDate
-        +string UserName
+        +string userName
         +int LogType
     }
 
@@ -91,20 +92,20 @@ classDiagram
         +int UsersId FK
     }
 
-    Users "1" --> "0..*" Comments : UserId
-    Books "1" --> "0..*" Comments : BookId
+    Comments "0..*" --> "1" Users : UserId
+    Comments "0..*" --> "1" Books : BookId
 
-    Users "1" --> "0..*" Orders : UserId
+    Orders "0..*" --> "1" Users : UserId
 
-    Users "0..1" --> "1" Address : AddressId
-    Users "0..1" --> "1" Address : BillingAddressId
+    Users "0..*" --> "0..1" Address : AddressId
+    Users "0..*" --> "0..1" Address : BillingAddressId
 
-    Users "1" --> "0..*" Genres : UserId
-    Books "1" --> "0..*" Genres : BookId
+    Genres "0..*" --> "0..1" Users : UserId
+    Genres "0..*" --> "0..1" Books : BookId
 
-    Books "1" --> "0..*" BookOrder : BooksId
-    Orders "1" --> "0..*" BookOrder : OrdersId
+    BookOrder "0..*" --> "1" Books : BooksId
+    BookOrder "0..*" --> "1" Orders : OrdersId
 
-    Users "1" --> "0..*" UserFavouriteBooks : UsersId
-    Books "1" --> "0..*" UserFavouriteBooks : FavouriteBooksId
+    UserFavouriteBooks "0..*" --> "1" Books : FavouriteBooksId
+    UserFavouriteBooks "0..*" --> "1" Users : UsersId
 ```
