@@ -1,4 +1,5 @@
 ```mermaid
+erDiagram
   USER {
         int Id PK
         string Name
