@@ -125,7 +125,7 @@ jobs:
             SCORE_BP=$(EXTRACT_SCORE "best-practices")
             SCORE_SEO=$(EXTRACT_SCORE "seo")
             
-            REPORT_URL=$(echo '${{ steps.lighthouse_audit.outputs.links }}' | jq -r 'if type=="array" then .[0] else . end')
+            REPORT_URL=$(echo '${{ steps.lighthouse_audit.outputs.links }}' | jq -r 'to_entries[0].value')
 
             echo "### ⚡ Lighthouse Audit Výsledky" >> $GITHUB_STEP_SUMMARY
             echo "| Kategorie | Skóre |" >> $GITHUB_STEP_SUMMARY
