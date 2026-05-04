@@ -60,7 +60,7 @@ jobs:
           ACR_SERVER=${{ vars.ACR_NAME }}.azurecr.io
           IMAGE_NAME=$ACR_SERVER/backend-api
           az acr login --name ${{ vars.ACR_NAME }}
-          docker build --platform linux/amd64 -f api/api/Dockerfile \
+          docker build --platform linux/amd64 -f api/Dockerfile \
             -t $IMAGE_NAME:${{ github.sha }} \
             -t $IMAGE_NAME:latest .
           docker push -a $IMAGE_NAME
