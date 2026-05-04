@@ -1,89 +1,91 @@
 ```mermaid
 classDiagram
-
-    class Address {
-        +int Id
-        +string StreetAddress
-        +string City
-        +string Zip
-        +string Country
-    }
-
-    class AuditLog {
-        +int Id
-        +string Original
-        +string Updated
-        +DateTime CreatedDate
-        +string UserName
-        +LogType LogType
-    }
-
-    class Book {
-        +int Id
-        +string Title
-        +string Authors
-        +int PublicationYear
-        +double Rating
-        +double Price
-        +bool IsHidden
-        +ICollection~Comment~ Comments
-        +ICollection~User~ Users
-        +ICollection~Order~ Orders
-        +ICollection~Genre~ Genres
-    }
-
-    class Comment {
-        +int Id
-        +string Content
-        +DateTime CreatedDate
-        +int BookId
-        +int UserId
-        +int Rating
-    }
-
-    class Genre {
-        +int Id
-        +string Name
-    }
-
-    class Order {
-        +int Id
-        +DateTime Created
-        +double TotalPrice
-        +string UserSnapshot
-        +ICollection~Book~ Books
-        +User User
-    }
-
     class User {
-        +int Id
+        +int Id PK
         +string Name
         +string UserName
         +string Email
         +string PasswordHash
         +string Role
         +DateTime BirthDay
-        +Address Address
-        +Address BillingAddress
-        +ICollection~Comment~ Comments
-        +ICollection~Book~ FavouriteBooks
-        +ICollection~Genre~ FavouriteGenres
-        +ICollection~Order~ Orders
+        +int AddressId FK
+        +int BillingAddressId FK
     }
 
-    %% Relationships
+    class Address {
+        +int Id PK
+        +string StreetAddress
+        +string City
+        +string Zip
+        +string Country
+    }
 
-    User "1" --> "0..*" Comment : writes
-    Book "1" --> "0..*" Comment : has
+    class Book {
+        +int Id PK
+        +string Title
+        +string Authors
+        +int PublicationYear
+        +double Rating
+        +double Price
+        +bool IsHidden
+    }
 
-    User "0..*" --> "0..*" Book : favourites
-    User "0..*" --> "0..*" Genre : favourite genres
+    class Comment {
+        +int Id PK
+        +string Content
+        +DateTime CreatedDate
+        +int Rating
+        +int BookId FK
+        +int UserId FK
+    }
 
-    Book "0..*" --> "0..*" Genre : categorized
+    class Genre {
+        +int Id PK
+        +string Name
+    }
 
-    Order "0..*" --> "0..*" Book : contains
-    User "1" --> "0..*" Order : places
+    class Order {
+        +int Id PK
+        +DateTime Created
+        +double TotalPrice
+        +string UserSnapshot
+        +int UserId FK
+    }
 
-    User "1" --> "0..1" Address : address
-    User "1" --> "0..1" Address : billing
+    %% JOIN TABLES (důležité pro DB!)
+
+    class UserFavouriteBooks {
+        +int UserId FK
+        +int BookId FK
+    }
+
+    class BookGenres {
+        +int BookId FK
+        +int GenreId FK
+    }
+
+    class OrderBooks {
+        +int OrderId FK
+        +int BookId FK
+    }
+
+    %% Relationships (relační pohled)
+
+    User "1" --> "0..*" Comment : UserId
+    Book "1" --> "0..*" Comment : BookId
+
+    User "1" --> "0..*" Order : UserId
+
+    User "1" --> "0..1" Address : AddressId
+    User "1" --> "0..1" Address : BillingAddressId
+
+    %% M:N přes join tabulky
+    User "1" --> "0..*" UserFavouriteBooks
+    Book "1" --> "0..*" UserFavouriteBooks
+
+    Book "1" --> "0..*" BookGenres
+    Genre "1" --> "0..*" BookGenres
+
+    Order "1" --> "0..*" OrderBooks
+    Book "1" --> "0..*" OrderBooks
 ```
