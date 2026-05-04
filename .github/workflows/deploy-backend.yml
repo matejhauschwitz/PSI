@@ -43,6 +43,8 @@ jobs:
   deploy-backend:
     needs: test-backend
     runs-on: ubuntu-latest
+    outputs:
+      BACKEND_URL: ${{ steps.get_url.outputs.BACKEND_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -57,14 +59,42 @@ jobs:
         run: |
           ACR_SERVER=${{ vars.ACR_NAME }}.azurecr.io
           IMAGE_NAME=$ACR_SERVER/backend-api
-          
           az acr login --name ${{ vars.ACR_NAME }}
-          
-          docker build --platform linux/amd64 -f api/Dockerfile \
+          docker build --platform linux/amd64 -f api/api/Dockerfile \
             -t $IMAGE_NAME:${{ github.sha }} \
             -t $IMAGE_NAME:latest .
-          
           docker push -a $IMAGE_NAME
 
       - name: Restart App Service
         run: az webapp restart --name app-psi-backend-shared --resource-group rg-bookstore-shared
+
+      - name: Get Backend URL
+        id: get_url
+        run: |
+          URL="https://$(az webapp show --name app-psi-backend-shared --resource-group rg-bookstore-shared --query "defaultHostName" -o tsv)"
+          echo "BACKEND_URL=$URL" >> $GITHUB_OUTPUT
+
+  load-test-backend:
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for App to warm up
+        run: |
+          echo "Čekám 30 sekund na inicializaci kontejneru na Azure..."
+          sleep 30
+
+      - name: Run k6 Load Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: api.tests/load-test.js
+        env:
+          K6_BASE_URL: ${{ needs.deploy-backend.outputs.BACKEND_URL }}
+
+      - name: Backend Performance Summary
+        if: always()
+        run: |
+          echo "### 📈 Výsledek zátěžového testu" >> $GITHUB_STEP_SUMMARY
+          echo "Testovaná URL: ${{ needs.deploy-backend.outputs.BACKEND_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "Stav: Dokončeno ✅" >> $GITHUB_STEP_SUMMARY
