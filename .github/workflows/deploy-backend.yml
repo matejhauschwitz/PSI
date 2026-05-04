@@ -83,7 +83,7 @@ jobs:
       - name: Wait for App to warm up
         run: |
           echo "Čekám 30 sekund na inicializaci kontejneru na Azure..."
-          sleep 30
+          sleep 50
 
       - name: Run k6 Load Test
         uses: grafana/k6-action@v0.3.1
