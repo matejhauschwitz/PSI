@@ -117,7 +117,7 @@ jobs:
           if [ "$RESULTS_JSON" != "" ] && [ "$RESULTS_JSON" != "null" ]; then
             
             EXTRACT_SCORE() {
-              echo $RESULTS_JSON | jq -r "if type==\"array\" then .[0].summary.$1 else .summary.$1 end | . * 100 | floor"
+              echo $RESULTS_JSON | jq -r "if type==\"array\" then .[0].summary[\"$1\"] else .summary[\"$1\"] end | . * 100 | floor"
             }
 
             SCORE_PERF=$(EXTRACT_SCORE "performance")
