@@ -1,78 +1,89 @@
 ```mermaid
-erDiagram
-  USER {
-        int Id PK
-        string Name
-        string UserName
-        string PasswordHash
-        string Role
-        string Email
-        datetime BirthDay
+classDiagram
+
+    class Address {
+        +int Id
+        +string StreetAddress
+        +string City
+        +string Zip
+        +string Country
     }
 
-    ADDRESS {
-        int Id PK
-        string StreetAddress
-        string City
-        string Zip
-        string Country
+    class AuditLog {
+        +int Id
+        +string Original
+        +string Updated
+        +DateTime CreatedDate
+        +string UserName
+        +LogType LogType
     }
 
-    BOOK {
-        int Id PK
-        string Title
-        string Authors
-        int PublicationYear
-        double Rating
-        double Price
-        bool IsHidden
+    class Book {
+        +int Id
+        +string Title
+        +string Authors
+        +int PublicationYear
+        +double Rating
+        +double Price
+        +bool IsHidden
+        +ICollection~Comment~ Comments
+        +ICollection~User~ Users
+        +ICollection~Order~ Orders
+        +ICollection~Genre~ Genres
     }
 
-    COMMENT {
-        int Id PK
-        string Content
-        datetime CreatedDate
-        int Rating
-        int BookId FK
-        int UserId FK
+    class Comment {
+        +int Id
+        +string Content
+        +DateTime CreatedDate
+        +int BookId
+        +int UserId
+        +int Rating
     }
 
-    GENRE {
-        int Id PK
-        string Name
+    class Genre {
+        +int Id
+        +string Name
     }
 
-    ORDER {
-        int Id PK
-        datetime Created
-        double totalPrice
-        string UserSnapshot
+    class Order {
+        +int Id
+        +DateTime Created
+        +double TotalPrice
+        +string UserSnapshot
+        +ICollection~Book~ Books
+        +User User
     }
 
-    AUDITLOG {
-        int Id PK
-        string Original
-        string Updated
-        datetime CreatedDate
-        string userName
-        int LogType
+    class User {
+        +int Id
+        +string Name
+        +string UserName
+        +string Email
+        +string PasswordHash
+        +string Role
+        +DateTime BirthDay
+        +Address Address
+        +Address BillingAddress
+        +ICollection~Comment~ Comments
+        +ICollection~Book~ FavouriteBooks
+        +ICollection~Genre~ FavouriteGenres
+        +ICollection~Order~ Orders
     }
 
     %% Relationships
 
-    USER ||--o{ COMMENT : writes
-    BOOK ||--o{ COMMENT : has
+    User "1" --> "0..*" Comment : writes
+    Book "1" --> "0..*" Comment : has
 
-    USER }o--o{ BOOK : FavouriteBooks
+    User "0..*" --> "0..*" Book : favourites
+    User "0..*" --> "0..*" Genre : favourite genres
 
-    USER }o--o{ GENRE : FavouriteGenres
+    Book "0..*" --> "0..*" Genre : categorized
 
-    BOOK }o--o{ GENRE : categorized
+    Order "0..*" --> "0..*" Book : contains
+    User "1" --> "0..*" Order : places
 
-    ORDER }o--o{ BOOK : contains
-
-    USER ||--o{ ORDER : places
-
-    USER ||--o| ADDRESS : has
-    USER ||--o| ADDRESS : billing
+    User "1" --> "0..1" Address : address
+    User "1" --> "0..1" Address : billing
 ```
