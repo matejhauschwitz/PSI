@@ -95,6 +95,8 @@ jobs:
   performance-audit:
     needs: deploy-frontend
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
@@ -105,12 +107,13 @@ jobs:
           urls: ${{ needs.deploy-frontend.outputs.WEB_URL }}
           uploadArtifacts: false 
           temporaryPublicStorage: true
+          outputDir: ./.lighthouseci
 
       - name: Upload Lighthouse Results
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
-          path: .lighthouseci/
+          path: ./.lighthouseci/
 
       - name: Format Lighthouse Score
         if: success() || failure()
