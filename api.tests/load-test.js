@@ -17,7 +17,7 @@ export default function () {
   const baseUrl = __ENV.K6_BASE_URL;
   
   // --- TEST 1: SEZNAM KNIH ---
-  const resAll = http.get(`${baseUrl}/api/books`);
+  const resAll = http.get(`${baseUrl}/books`);
   
   const checkResAll = check(resAll, {
     'GET books - status 200': (r) => r.status === 200,
@@ -32,7 +32,7 @@ export default function () {
   sleep(1);
 
   // --- TEST 2: DETAIL KNIHY ---
-  const resOne = http.get(`${baseUrl}/api/books/1`);
+  const resOne = http.get(`${baseUrl}/books/1`);
   check(resOne, {
     'GET book detail - status 200 nebo 404': (r) => r.status === 200 || r.status === 404,
   });
