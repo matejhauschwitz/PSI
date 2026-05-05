@@ -238,7 +238,7 @@ export default function ProfilePage() {
                   >
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <p className="font-semibold text-stone-900">Objednávka #{order.status}</p>
+                        <p className="font-semibold text-stone-900">Objednávka #{order.id}</p>
                         <p className="text-sm text-stone-500">
                           {order.createdAt
                             ? new Date(order.createdAt).toLocaleDateString('cs-CZ')
