@@ -82,9 +82,9 @@ describe('ProfilePage', () => {
         vi.mocked(userService.getUserDetail).mockResolvedValue(mockValidUser as any)
         vi.mocked(bookService.getGenres).mockResolvedValue(['Sci-Fi', 'Fantasy'])
         vi.mocked(orderService.getOrders).mockResolvedValue([
-            { id: 1, status: 'Completed', totalPrice: 500, createdAt: '2026-05-01' },
-            { id: 2, status: 'Pending', totalPrice: 100, bookIds: [1] },
-            { id: 3, status: 'Unknown', totalPrice: 200 }
+            { id: 1, status: 2, totalPrice: 500, createdAt: '2026-05-01' }, // 2 = Dokončeno
+            { id: 2, status: 0, totalPrice: 100, bookIds: [1] },            // 0 = Čekající
+            { id: 3, status: 99, totalPrice: 200 }                          // 99 (nebo null/'Unknown') = neexistující klíč -> spadne do "Neznámý"
         ] as any)
         vi.mocked(userService.updateUser).mockResolvedValue({} as any)
     })
@@ -195,17 +195,15 @@ describe('ProfilePage', () => {
     it('vykreslí objednávky a jejich stavy', async () => {
         render(<ProfilePage />)
 
-        await waitFor(() => {
-            // API vrací 3 mock objednávky (id 1, 2, 3), zkontrolujeme jestli tam jsou a jak se vypsaly statusy
+    await waitFor(() => {
             expect(screen.getByText('Objednávka #1')).toBeInTheDocument()
-            expect(screen.getByText('Dokončeno')).toBeInTheDocument()
+            expect(screen.getByText('Dokončeno')).toBeInTheDocument() // Reaguje na status: 2
 
             expect(screen.getByText('Objednávka #2')).toBeInTheDocument()
-            expect(screen.getByText('Čekající')).toBeInTheDocument()
+            expect(screen.getByText('Čekající')).toBeInTheDocument() // Reaguje na status: 0
 
             expect(screen.getByText('Objednávka #3')).toBeInTheDocument()
-            // TADY BYLA CHYBA: hledali jsme "Unknown", ale v UI se ukazuje "Neznámý"
-            expect(screen.getByText('Neznámý')).toBeInTheDocument()
+            expect(screen.getByText('Neznámý')).toBeInTheDocument() // Reaguje na neznámou hodnotu nebo 'Unknown'
         })
     })
 
