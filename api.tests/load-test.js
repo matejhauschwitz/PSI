@@ -8,7 +8,7 @@ export const options = {
     { duration: '10s', target: 0 },  // Odpojení
   ],
   thresholds: {
-    http_req_failed: ['rate<0.05'], 
+    http_req_failed: ['rate<0.03'], 
     http_req_duration: ['p(95)<1000'],
   },
 };
