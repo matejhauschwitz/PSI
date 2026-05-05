@@ -220,14 +220,16 @@ export default function ProfilePage() {
           ) : (
             <div className="space-y-3">
               {orders.map((order) => {
-                const statusLabels: { [key: string]: { color: string; text: string } } = {
-                  'Pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Čekající' },
-                  'Processing': { color: 'bg-blue-100 text-blue-800', text: 'Zpracovávání' },
-                  'Completed': { color: 'bg-green-100 text-green-800', text: 'Dokončeno' },
-                  'Cancelled': { color: 'bg-red-100 text-red-800', text: 'Zrušeno' },
+                const statusLabels = {
+                  0: { color: 'bg-yellow-100 text-yellow-800', text: 'Čekající' },
+                  1: { color: 'bg-blue-100 text-blue-800', text: 'Zpracovávání' },
+                  2: { color: 'bg-green-100 text-green-800', text: 'Dokončeno' },
+                  3: { color: 'bg-red-100 text-red-800', text: 'Zrušeno' },
                   'Unknown': { color: 'bg-gray-100 text-gray-800', text: 'Neznámý' },
                 }
-                const statusInfo = statusLabels[order.status || 'Unknown'] || { color: 'bg-gray-100 text-gray-800', text: order.status || 'Neznámý' }
+
+                // Pomocí "as keyof typeof statusLabels" přetypujeme klíč
+                const statusInfo = statusLabels[order.status as keyof typeof statusLabels] || statusLabels['Unknown']
                 
                 return (
                   <div
@@ -236,7 +238,7 @@ export default function ProfilePage() {
                   >
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <p className="font-semibold text-stone-900">Objednávka #{order.id}</p>
+                        <p className="font-semibold text-stone-900">Objednávka #{order.status}</p>
                         <p className="text-sm text-stone-500">
                           {order.createdAt
                             ? new Date(order.createdAt).toLocaleDateString('cs-CZ')
